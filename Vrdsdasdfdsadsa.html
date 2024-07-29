@@ -76,21 +76,4 @@
 
         // Function to play both videos and set up timer
         function playBothVideos() {
-            var url = document.getElementById('urlInput').value;
-            if (url) {
-                loadVideo(url);
-                player1.playVideo();
-                player2.playVideo();
-                player2.mute(); // Mute the second video
-                setTimeout(function() {
-                    player1.seekTo(10, true);
-                    player2.seekTo(10, true);
-                }, 3000);
-            }
-        }
-
-        // Add click event to the button
-        document.getElementById('playButton').addEventListener('click', playBothVideos);
-    </script>
-</body>
-</html>
+            var url = document.getElementBy

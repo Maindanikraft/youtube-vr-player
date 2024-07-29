@@ -1,8 +1,9 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VR YouTube Video</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
             margin: 0;
@@ -15,15 +16,18 @@
             background-color: #000;
             color: #fff;
             position: relative; /* Allows positioning of the buttons */
+            font-family: Arial, sans-serif;
         }
         .video-container {
             display: flex;
             width: 100%;
             height: calc(100% - 80px); /* Adjust height to leave space for the controls */
+            position: relative;
         }
         .video-container iframe {
             flex: 1;
             height: 100%;
+            border: none;
         }
         .play-button, .url-input {
             margin: 10px;
@@ -34,11 +38,20 @@
             border-radius: 5px;
             cursor: pointer;
             font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        .play-button:hover, .url-input:focus {
+            background-color: #555;
         }
         .url-input {
             margin-bottom: 20px;
             width: 300px;
             text-align: center;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 5px;
+            color: #fff;
+            background-color: #222;
         }
         .controls-container {
             position: absolute;
@@ -46,24 +59,29 @@
             left: 50%;
             transform: translateX(-50%);
             z-index: 10; /* Ensure it appears above other elements */
+            text-align: center;
         }
         .hide-controls-button, .fullscreen-button {
             position: absolute;
             top: 20px;
             right: 20px;
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             background-color: rgba(255, 255, 255, 0.1); /* Transparent white */
             color: #fff;
             border: none;
-            border-radius: 15px;
+            border-radius: 20px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 24px;
             text-align: center;
-            line-height: 30px;
+            line-height: 40px;
+            transition: background-color 0.3s;
+        }
+        .hide-controls-button:hover, .fullscreen-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
         }
         .fullscreen-button {
-            top: 60px; /* Adjust position to be below the hide button */
+            top: 70px; /* Adjust position to be below the hide button */
         }
         .hidden {
             display: none;
@@ -83,10 +101,10 @@
     </style>
 </head>
 <body>
-    <button class="hide-controls-button" id="hideControlsButton">×</button>
-    <button class="fullscreen-button" id="fullscreenButton">⛶</button>
+    <button class="hide-controls-button" id="hideControlsButton" aria-label="Hide Controls">×</button>
+    <button class="fullscreen-button" id="fullscreenButton" aria-label="Toggle Fullscreen">⛶</button>
     <div class="controls-container" id="controlsContainer">
-        <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" />
+        <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" aria-label="YouTube URL" />
         <button class="play-button" id="playButton">Play Videos</button>
     </div>
     <div class="video-container">
@@ -95,7 +113,6 @@
     </div>
 
     <script>
-        // Load the IFrame Player API code asynchronously.
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -103,49 +120,86 @@
 
         var player1, player2;
         var isFullscreen = false;
+        var syncInterval;
 
-        // This function creates an <iframe> (and YouTube player)
-        // after the API code downloads.
         function onYouTubeIframeAPIReady() {
-            player1 = new YT.Player('video1');
-            player2 = new YT.Player('video2');
+            player1 = new YT.Player('video1', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+            player2 = new YT.Player('video2', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
         }
 
-        // Function to load new video URL into players
-        function loadVideo(url) {
-            var videoId = new URL(url).searchParams.get('v');
-            if (videoId) {
-                player1.loadVideoById(videoId);
-                player2.loadVideoById(videoId);
+        function onPlayerReady(event) {
+            if (player1 && player2) {
+                document.getElementById('playButton').disabled = false;
             }
         }
 
-        // Function to play both videos and set up timer
+        function loadVideo(url) {
+            try {
+                var videoId = new URL(url).searchParams.get('v');
+                if (videoId) {
+                    var embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+                    document.getElementById('video1').src = embedUrl;
+                    document.getElementById('video2').src = embedUrl;
+                } else {
+                    alert('Invalid YouTube URL');
+                }
+            } catch (e) {
+                alert('Error loading video');
+            }
+        }
+
         function playBothVideos() {
             var url = document.getElementById('urlInput').value;
-            if (url) {
+            if (url && player1 && player2) {
                 loadVideo(url);
                 player1.playVideo();
                 player2.playVideo();
                 player2.mute(); // Mute the second video
-                // Set a timer to jump both videos to 10 seconds after 10 seconds
                 setTimeout(function() {
                     player1.seekTo(10, true);
                     player2.seekTo(10, true);
                 }, 10000); // 10 seconds
+
+                // Start synchronization check
+                startSyncCheck();
+            } else {
+                alert('Please enter a valid YouTube URL');
             }
         }
 
-        // Add click event to the play button
+        function startSyncCheck() {
+            if (syncInterval) clearInterval(syncInterval); // Clear previous interval if any
+
+            syncInterval = setInterval(function() {
+                if (player1 && player2) {
+                    var time1 = player1.getCurrentTime();
+                    var time2 = player2.getCurrentTime();
+                    var diff = Math.abs(time1 - time2);
+
+                    if (diff > 0.5) { // If difference is more than 0.5 seconds
+                        var targetTime = Math.min(time1, time2); // Seek to the earlier time
+                        player1.seekTo(targetTime, true);
+                        player2.seekTo(targetTime, true);
+                    }
+                }
+            }, 1000); // Check every second
+        }
+
         document.getElementById('playButton').addEventListener('click', playBothVideos);
 
-        // Add click event to the hide controls button
         document.getElementById('hideControlsButton').addEventListener('click', function() {
             var controlsContainer = document.getElementById('controlsContainer');
             controlsContainer.classList.toggle('hidden');
         });
 
-        // Add click event to the fullscreen button
         document.getElementById('fullscreenButton').addEventListener('click', function() {
             var body = document.body;
             if (!isFullscreen) {

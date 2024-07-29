@@ -63,16 +63,28 @@
             line-height: 30px;
         }
         .fullscreen-button {
-            right: 60px; /* Adjust position for fullscreen button */
+            top: 60px; /* Adjust position to be below the hide button */
         }
         .hidden {
             display: none;
+        }
+        /* Styles for fullscreen */
+        .fullscreen .video-container {
+            height: 100vh; /* Fullscreen height */
+            width: 100vw;  /* Fullscreen width */
+            top: 0;
+            left: 0;
+            position: fixed;
+            z-index: 9; /* Ensure it is above other content */
+        }
+        .fullscreen .controls-container {
+            display: none; /* Hide controls in fullscreen mode */
         }
     </style>
 </head>
 <body>
     <button class="hide-controls-button" id="hideControlsButton">×</button>
-    <button class="fullscreen-button" id="fullscreenButton">⤛</button>
+    <button class="fullscreen-button" id="fullscreenButton">⛶</button>
     <div class="controls-container" id="controlsContainer">
         <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" />
         <button class="play-button" id="playButton">Play Videos</button>
@@ -90,6 +102,7 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         var player1, player2;
+        var isFullscreen = false;
 
         // This function creates an <iframe> (and YouTube player)
         // after the API code downloads.
@@ -134,11 +147,13 @@
 
         // Add click event to the fullscreen button
         document.getElementById('fullscreenButton').addEventListener('click', function() {
-            var videoContainer = document.querySelector('.video-container');
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
+            var body = document.body;
+            if (!isFullscreen) {
+                body.classList.add('fullscreen');
+                isFullscreen = true;
             } else {
-                videoContainer.requestFullscreen();
+                body.classList.remove('fullscreen');
+                isFullscreen = false;
             }
         });
     </script>

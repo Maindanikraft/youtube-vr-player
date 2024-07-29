@@ -14,11 +14,12 @@
             height: 100vh;
             background-color: #000;
             color: #fff;
+            position: relative; /* Allows positioning of the hide button */
         }
         .video-container {
             display: flex;
             width: 100%;
-            height: calc(100% - 80px); /* Adjust height to leave space for the input and button */
+            height: calc(100% - 80px); /* Adjust height to leave space for the controls */
         }
         .video-container iframe {
             flex: 1;
@@ -39,7 +40,14 @@
             width: 300px;
             text-align: center;
         }
-        .hide-button {
+        .controls-container {
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10; /* Ensure it appears above other elements */
+        }
+        .hide-controls-button {
             position: absolute;
             top: 20px;
             right: 20px;
@@ -60,9 +68,11 @@
     </style>
 </head>
 <body>
-    <button class="hide-button" id="hideButton">×</button>
-    <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" />
-    <button class="play-button" id="playButton">Play Videos</button>
+    <button class="hide-controls-button" id="hideControlsButton">×</button>
+    <div class="controls-container" id="controlsContainer">
+        <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" />
+        <button class="play-button" id="playButton">Play Videos</button>
+    </div>
     <div class="video-container">
         <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -112,12 +122,10 @@
         // Add click event to the play button
         document.getElementById('playButton').addEventListener('click', playBothVideos);
 
-        // Add click event to the hide button
-        document.getElementById('hideButton').addEventListener('click', function() {
-            var urlInput = document.getElementById('urlInput');
-            var playButton = document.getElementById('playButton');
-            urlInput.classList.toggle('hidden');
-            playButton.classList.toggle('hidden');
+        // Add click event to the hide controls button
+        document.getElementById('hideControlsButton').addEventListener('click', function() {
+            var controlsContainer = document.getElementById('controlsContainer');
+            controlsContainer.classList.toggle('hidden');
         });
     </script>
 </body>

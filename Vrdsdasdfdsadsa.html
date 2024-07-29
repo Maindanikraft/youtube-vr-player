@@ -163,10 +163,6 @@
                 player1.playVideo();
                 player2.playVideo();
                 player2.mute(); // Mute the second video
-                setTimeout(function() {
-                    player1.seekTo(10, true);
-                    player2.seekTo(10, true);
-                }, 10000); // 10 seconds
 
                 // Start synchronization check
                 startSyncCheck();
@@ -184,7 +180,7 @@
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > 0.5) { // If difference is more than 0.5 seconds
+                    if (diff > 0.1) { // If difference is more than 0.1 seconds
                         var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);

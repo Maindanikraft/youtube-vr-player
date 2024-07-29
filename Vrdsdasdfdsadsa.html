@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>VR Video Player</title>
+    <title>VR YouTube Video</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
         body {
@@ -18,13 +18,13 @@
         .video-container {
             display: flex;
             width: 100%;
-            height: calc(100% - 80px); /* Adjust height to leave space for the input and buttons */
+            height: calc(100% - 80px); /* Adjust height to leave space for the input and button */
         }
-        .video-container iframe, .video-container video {
+        .video-container iframe {
             flex: 1;
             height: 100%;
         }
-        .play-button, .url-input, .hide-controls, .show-controls {
+        .play-button, .url-input {
             margin: 10px;
             padding: 10px 20px;
             background-color: #333;
@@ -34,116 +34,63 @@
             cursor: pointer;
             font-size: 16px;
         }
-        .hide-controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: #333;
-            font-size: 20px;
-            line-height: 30px;
+        .url-input {
+            margin-bottom: 20px;
+            width: 300px;
             text-align: center;
-            cursor: pointer;
-        }
-        .show-controls {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            background-color: #333;
-            font-size: 20px;
-            line-height: 30px;
-            text-align: center;
-            cursor: pointer;
-            display: none; /* Initially hidden */
-        }
-        .controls-container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
         }
     </style>
 </head>
 <body>
-    <div class="controls-container">
-        <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube or Video URL" />
-        <button class="play-button" id="playButton">Play Videos</button>
-        <button class="hide-controls" id="hideControls">–</button>
-        <button class="show-controls" id="showControls">+</button>
-    </div>
+    <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" />
+    <button class="play-button" id="playButton">Play Videos</button>
     <div class="video-container">
         <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <video id="video2" controls></video>
+        <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
     <script>
-        // Load the IFrame Player API code asynchronously
+        // Load the IFrame Player API code asynchronously.
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         var player1, player2;
-        var video2Element = document.getElementById('video2');
 
-        // Create YouTube player
+        // This function creates an <iframe> (and YouTube player)
+        // after the API code downloads.
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1');
+            player2 = new YT.Player('video2');
         }
 
-        // Load video URL into players
+        // Function to load new video URL into players
         function loadVideo(url) {
             var videoId = new URL(url).searchParams.get('v');
             if (videoId) {
                 player1.loadVideoById(videoId);
-                video2Element.src = ''; // Clear any existing video source
-                return;
+                player2.loadVideoById(videoId);
             }
-
-            // If it's not a YouTube URL, treat it as a direct video URL
-            video2Element.src = url;
-            video2Element.load();
         }
 
-        // Play both videos and set up timer
+        // Function to play both videos and set up timer
         function playBothVideos() {
             var url = document.getElementById('urlInput').value;
             if (url) {
                 loadVideo(url);
-                if (player1) player1.playVideo();
-                video2Element.play();
-                video2Element.muted = true; // Mute the second video
+                player1.playVideo();
+                player2.playVideo();
+                player2.mute(); // Mute the second video
                 setTimeout(function() {
-                    if (player1) player1.seekTo(10, true);
-                    video2Element.currentTime = 10;
+                    player1.seekTo(10, true);
+                    player2.seekTo(10, true);
                 }, 3000);
             }
         }
 
-        // Add click event to the play button
+        // Add click event to the button
         document.getElementById('playButton').addEventListener('click', playBothVideos);
-
-        // Hide controls
-        document.getElementById('hideControls').addEventListener('click', function() {
-            document.querySelector('.controls-container').style.display = 'none';
-            document.querySelector('.show-controls').style.display = 'block';
-        });
-
-        // Show controls
-        document.getElementById('showControls').addEventListener('click', function() {
-            document.querySelector('.controls-container').style.display = 'flex';
-            document.querySelector('.show-controls').style.display = 'none';
-        });
-
-        // Initialize hidden controls button
-        document.addEventListener('DOMContentLoaded', function() {
-            document.querySelector('.show-controls').style.display = 'none';
-        });
     </script>
 </body>
 </html>

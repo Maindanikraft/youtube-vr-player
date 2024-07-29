@@ -18,14 +18,13 @@
         .video-container {
             display: flex;
             width: 100%;
-            height: calc(100% - 80px); /* Adjust height to leave space for the input and buttons */
-            position: relative;
+            height: calc(100% - 80px); /* Adjust height to leave space for the input and button */
         }
         .video-container iframe {
             flex: 1;
             height: 100%;
         }
-        .play-button, .url-input, .hide-controls-button {
+        .play-button, .url-input {
             margin: 10px;
             padding: 10px 20px;
             background-color: #333;
@@ -40,25 +39,30 @@
             width: 300px;
             text-align: center;
         }
-        .hide-controls-button {
+        .hide-button {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            padding: 5px;
-            background-color: rgba(0, 0, 0, 0.5);
+            top: 20px;
+            right: 20px;
+            width: 30px;
+            height: 30px;
+            background-color: rgba(255, 255, 255, 0.1); /* Transparent white */
             color: #fff;
-            font-size: 12px;
-            border-radius: 5px;
+            border: none;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            line-height: 30px;
         }
-        .hide-controls-button:focus {
-            outline: none;
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
+    <button class="hide-button" id="hideButton">×</button>
     <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" />
     <button class="play-button" id="playButton">Play Videos</button>
-    <button class="hide-controls-button" id="hideControlsButton">Hide Controls</button>
     <div class="video-container">
         <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -105,18 +109,16 @@
             }
         }
 
-        // Function to hide controls
-        function hideControls() {
-            var iframes = document.querySelectorAll('.video-container iframe');
-            iframes.forEach(function(iframe) {
-                var src = iframe.src;
-                iframe.src = src + '&controls=0'; // Hide controls
-            });
-        }
-
-        // Add click event to the buttons
+        // Add click event to the play button
         document.getElementById('playButton').addEventListener('click', playBothVideos);
-        document.getElementById('hideControlsButton').addEventListener('click', hideControls);
+
+        // Add click event to the hide button
+        document.getElementById('hideButton').addEventListener('click', function() {
+            var urlInput = document.getElementById('urlInput');
+            var playButton = document.getElementById('playButton');
+            urlInput.classList.toggle('hidden');
+            playButton.classList.toggle('hidden');
+        });
     </script>
 </body>
 </html>

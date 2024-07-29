@@ -14,7 +14,7 @@
             height: 100vh;
             background-color: #000;
             color: #fff;
-            position: relative; /* Allows positioning of the hide button */
+            position: relative; /* Allows positioning of the buttons */
         }
         .video-container {
             display: flex;
@@ -47,7 +47,7 @@
             transform: translateX(-50%);
             z-index: 10; /* Ensure it appears above other elements */
         }
-        .hide-controls-button {
+        .hide-controls-button, .fullscreen-button {
             position: absolute;
             top: 20px;
             right: 20px;
@@ -62,6 +62,9 @@
             text-align: center;
             line-height: 30px;
         }
+        .fullscreen-button {
+            right: 60px; /* Adjust position for fullscreen button */
+        }
         .hidden {
             display: none;
         }
@@ -69,6 +72,7 @@
 </head>
 <body>
     <button class="hide-controls-button" id="hideControlsButton">×</button>
+    <button class="fullscreen-button" id="fullscreenButton">⤛</button>
     <div class="controls-container" id="controlsContainer">
         <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" />
         <button class="play-button" id="playButton">Play Videos</button>
@@ -126,6 +130,16 @@
         document.getElementById('hideControlsButton').addEventListener('click', function() {
             var controlsContainer = document.getElementById('controlsContainer');
             controlsContainer.classList.toggle('hidden');
+        });
+
+        // Add click event to the fullscreen button
+        document.getElementById('fullscreenButton').addEventListener('click', function() {
+            var videoContainer = document.querySelector('.video-container');
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                videoContainer.requestFullscreen();
+            }
         });
     </script>
 </body>

@@ -64,7 +64,6 @@
         .hide-controls-button, .fullscreen-button {
             position: absolute;
             top: 20px;
-            right: 20px;
             width: 40px;
             height: 40px;
             background-color: rgba(255, 255, 255, 0.1); /* Transparent white */
@@ -80,8 +79,11 @@
         .hide-controls-button:hover, .fullscreen-button:hover {
             background-color: rgba(255, 255, 255, 0.3);
         }
+        .hide-controls-button {
+            right: 70px; /* Adjust position to the right */
+        }
         .fullscreen-button {
-            top: 70px; /* Adjust position to be below the hide button */
+            right: 20px; /* Adjust position to the right */
         }
         .hidden {
             display: none;
@@ -143,7 +145,12 @@
 
         function loadVideo(url) {
             try {
-                var videoId = new URL(url).searchParams.get('v');
+                var videoId;
+                if (url.includes('youtu.be')) {
+                    videoId = url.split('youtu.be/')[1];
+                } else {
+                    videoId = new URL(url).searchParams.get('v');
+                }
                 if (videoId) {
                     var embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
                     document.getElementById('video1').src = embedUrl;

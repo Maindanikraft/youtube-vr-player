@@ -18,33 +18,19 @@
             font-family: Arial, sans-serif;
             position: relative;
         }
-        .version {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            font-size: 14px;
-            color: #fff;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 5px 10px;
-            border-radius: 5px;
-        }
         .video-container {
             display: flex;
             justify-content: center;
             align-items: center;
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
             width: 100%;
-            height: calc(100% - 60px); /* Adjust for controls height */
+            height: 80vh; /* Adjust for control height */
+            position: relative;
         }
         .video-frame {
             position: relative;
-            width: 48%;
-            padding-top: 48%;
+            width: 50%;
+            padding-top: 28.5%;
             border-radius: 50%;
-            overflow: hidden;
             mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
             -webkit-mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
         }
@@ -56,59 +42,55 @@
             height: 100%;
             border: none;
         }
-        .controls-container {
-            position: absolute;
+        .controls-container, .hide-controls-button {
+            position: fixed;
             top: 10px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 10px;
-        }
-        .url-input, .hide-controls-button, .play-button {
-            padding: 10px 15px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: background-color 0.3s, transform 0.3s;
-            outline: none;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
-            display: inline-block;
-        }
-        .play-button:hover, .url-input:focus, .hide-controls-button:hover {
-            background-color: #555;
-            transform: translateY(-2px);
-        }
-        .url-input {
-            padding: 8px;
-            border: 1px solid #555;
-            background-color: #222;
-            width: 200px;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
         }
         .hide-controls-button {
-            width: 40px;
-            height: 40px;
-            font-size: 18px;
-            line-height: 40px;
-            border-radius: 50%;
+            position: absolute;
+            top: 10px;
+            width: 50px;
+            height: 50px;
             background-color: rgba(255, 255, 255, 0.1);
             color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 24px;
+            text-align: center;
+            line-height: 50px;
+            transition: background-color 0.3s;
         }
-        .hide-controls-button {
-            margin-right: 10px;
+        .hide-controls-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
         }
         .hidden {
             display: none;
+        }
+        .version {
+            position: fixed;
+            top: 10px;
+            left: 10px;
+            background-color: #333;
+            padding: 5px;
+            border-radius: 5px;
+            font-size: 14px;
         }
         /* Fullscreen Styles */
         .fullscreen .video-container {
             height: 100vh;
             width: 100vw;
+            top: 0;
+            left: 0;
+            position: fixed;
+            z-index: 9;
             flex-direction: row;
         }
         .fullscreen .video-frame {
@@ -121,7 +103,7 @@
         /* Mobile-Specific Styles */
         @media (max-width: 768px) {
             .video-container {
-                height: calc(100% - 60px); /* Account for controls height */
+                height: calc(100% - 120px); /* Account for controls height */
             }
             .video-frame {
                 width: 48%;
@@ -130,16 +112,20 @@
             .controls-container {
                 position: static;
                 transform: none;
-                gap: 5px;
             }
             .play-button, .url-input {
                 width: 80%;
             }
             .hide-controls-button {
-                width: 35px;
-                height: 35px;
-                font-size: 16px;
-                line-height: 35px;
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                line-height: 40px;
+                top: auto;
+                bottom: 10px;
+                left: 50%;
+                transform: translateX(-50%);
+                position: absolute;
             }
         }
     </style>
@@ -167,9 +153,9 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         var player1, player2;
-        var syncInterval;
-        var syncIntervalTime = 500; // Check sync every 0.5 seconds
-        var syncThreshold = 0.09; // Synchronization threshold in seconds (90 milliseconds)
+        var isFullscreen = false;
+        var syncIntervalTime = 1000; // Check sync every 1 second
+        var syncThreshold = 0.09; // Synchronization threshold in seconds
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -220,36 +206,48 @@
                 player2.mute();   // Mute the second video
 
                 // Start synchronization check
-                setTimeout(() => {
-                    player1.seekTo(3, true);
-                    player2.seekTo(3, true);
-                }, 4000);
-
-                syncInterval = setInterval(syncVideos, syncIntervalTime);
+                startSyncCheck();
             } else {
                 alert('Please enter a valid YouTube URL');
             }
         }
 
-        function syncVideos() {
-            if (player1 && player2) {
-                var time1 = player1.getCurrentTime();
-                var time2 = player2.getCurrentTime();
-                var diff = Math.abs(time1 - time2);
+        function startSyncCheck() {
+            if (syncInterval) clearInterval(syncInterval); // Clear previous interval if any
 
-                if (diff > syncThreshold) { // If difference exceeds the sync threshold
-                    var targetTime = Math.min(time1, time2); // Seek to the earlier time
-                    player1.seekTo(targetTime, true);
-                    player2.seekTo(targetTime, true);
+            syncInterval = setInterval(function() {
+                if (player1 && player2) {
+                    var time1 = player1.getCurrentTime();
+                    var time2 = player2.getCurrentTime();
+                    var diff = Math.abs(time1 - time2);
+
+                    if (diff > syncThreshold) { // If difference exceeds the sync threshold
+                        var targetTime = Math.min(time1, time2); // Seek to the earlier time
+                        player1.seekTo(targetTime, true);
+                        player2.seekTo(targetTime, true);
+                    }
                 }
-            }
+            }, syncIntervalTime); // Check every second
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
 
         document.getElementById('hideControlsButton').addEventListener('click', function() {
             var controlsContainer = document.getElementById('controlsContainer');
+            var hideControlsButton = document.getElementById('hideControlsButton');
             controlsContainer.classList.toggle('hidden');
+            hideControlsButton.classList.toggle('hidden');
+        });
+
+        document.getElementById('fullscreenButton').addEventListener('click', function() {
+            var body = document.body;
+            if (!isFullscreen) {
+                body.classList.add('fullscreen');
+                isFullscreen = true;
+            } else {
+                body.classList.remove('fullscreen');
+                isFullscreen = false;
+            }
         });
     </script>
 </body>

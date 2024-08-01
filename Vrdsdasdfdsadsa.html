@@ -116,6 +116,13 @@
         .vr-section .controls-container .hide-buttons:hover {
             background-color: #666;
         }
+        .vr-section .controls-container .fullscreen-button {
+            background-color: #444;
+            color: #fff;
+        }
+        .vr-section .controls-container .fullscreen-button:hover {
+            background-color: #666;
+        }
         .vr-player {
             display: flex;
             justify-content: center;
@@ -394,6 +401,14 @@
                         var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
+                    }
+
+                    // Reset to 3 seconds if either video reaches 4 seconds
+                    if (time1 >= 4) {
+                        player1.seekTo(3, true);
+                    }
+                    if (time2 >= 4) {
+                        player2.seekTo(3, true);
                     }
                 }
             }, 1000); // Check every second

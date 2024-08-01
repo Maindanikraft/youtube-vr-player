@@ -84,6 +84,8 @@
             justify-content: center;
             align-items: center;
             gap: 5px;
+            position: relative;
+            z-index: 15;
         }
         .vr-section .controls-container input,
         .vr-section .controls-container button {
@@ -140,7 +142,8 @@
             width: 45%; /* Slightly smaller size */
             height: 250px; /* Adjusted height */
             border: none;
-            border-radius: 10px; /* Rounded corners */
+            border-radius: 15px; /* Rounded corners */
+            background-color: #000; /* Ensure pitch black behind video */
         }
         .vr-separator {
             width: 3px;
@@ -162,7 +165,8 @@
         .fullscreen-mode iframe {
             width: 70vw; /* Responsive width */
             height: 70vh; /* Responsive height */
-            border-radius: 10px; /* Rounded corners */
+            border-radius: 15px; /* Rounded corners */
+            background-color: #000; /* Ensure pitch black behind video */
         }
         .about {
             background-color: #eee;
@@ -408,12 +412,14 @@
                         player2.seekTo(targetTime, true);
                     }
 
-                    // Reset videos if they reach 3 seconds
+                    // Reset videos if they reach or exceed 3 seconds
                     if (time1 >= 3) {
                         player1.seekTo(5, true);
+                        player1.pauseVideo();
                     }
                     if (time2 >= 3) {
                         player2.seekTo(5, true);
+                        player2.pauseVideo();
                     }
                 }
             }, 1000); // Check every second

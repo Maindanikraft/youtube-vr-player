@@ -10,8 +10,8 @@
             margin: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0; /* Home page background color */
-            color: #333;
+            background-color: #000; /* Updated to black */
+            color: #fff;
             display: flex;
             flex-direction: column;
             height: 100vh;
@@ -167,7 +167,7 @@
             background-color: #000; /* Ensure pitch black behind video */
         }
         .about {
-            background-color: #eee;
+            background-color: #111; /* Darker background for contrast */
             padding: 30px 10px;
             text-align: center;
         }
@@ -182,7 +182,7 @@
             margin: 0 auto;
         }
         .feature-item {
-            background-color: #fff;
+            background-color: #222;
             border-radius: 10px;
             padding: 8px;
             width: 130px;
@@ -465,11 +465,11 @@
         document.querySelectorAll('section').forEach(section => {
             section.addEventListener('mouseenter', function() {
                 this.style.transition = 'background-color 0.5s ease-in-out';
-                this.style.backgroundColor = '#fff';
+                this.style.backgroundColor = '#111'; // Slight change for hover effect
             });
             section.addEventListener('mouseleave', function() {
                 this.style.transition = 'background-color 0.5s ease-in-out';
-                this.style.backgroundColor = '#f0f0f0';
+                this.style.backgroundColor = '#000'; // Black background for default state
             });
         });
 

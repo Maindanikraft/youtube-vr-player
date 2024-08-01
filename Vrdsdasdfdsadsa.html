@@ -208,6 +208,7 @@
         function onPlayerReady(event) {
             if (player1 && player2) {
                 document.getElementById('playButton').disabled = false;
+                initializeVolumeBar();
             }
         }
 
@@ -238,8 +239,7 @@
                 player1.playVideo();
                 player2.playVideo();
                 player2.mute(); // Mute the second video
-
-                // Start synchronization check
+                initializeVolumeBar(); // Initialize volume bar
                 startSyncCheck();
             } else {
                 alert('Please enter a valid YouTube URL');
@@ -266,6 +266,13 @@
 
         function setVolume(value) {
             player1.setVolume(value * 100); // Set volume between 0 and 100
+        }
+
+        function initializeVolumeBar() {
+            var volume = player1.getVolume() / 100;
+            var rect = volumeBar.getBoundingClientRect();
+            var y = (1 - volume) * rect.height;
+            volumeHandle.style.top = y + 'px';
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
@@ -311,21 +318,10 @@
             }
         });
 
-        // Initialize volume bar
-        function initVolumeBar() {
-            var volume = player1.getVolume() / 100;
-            var rect = volumeBar.getBoundingClientRect();
-            var y = (1 - volume) * rect.height;
-            volumeHandle.style.top = y + 'px';
-        }
-
-        // Wait for the player to be ready before initializing volume bar
-        function onPlayerReady(event) {
-            if (player1 && player2) {
-                document.getElementById('playButton').disabled = false;
-                initVolumeBar();
-            }
-        }
+        // Update volume handle position on volume change
+        player1.addEventListener('onVolumeChange', function() {
+            initializeVolumeBar();
+        });
     </script>
 </body>
 </html>

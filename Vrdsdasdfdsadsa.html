@@ -231,12 +231,15 @@
                 if (player1 && player2) {
                     var time1 = player1.getCurrentTime();
                     var time2 = player2.getCurrentTime();
-                    var diff = Math.abs(time1 - time2);
+                    var diff = time1 - time2;
 
-                    if (diff > 0.005) { // If difference is more than 0.005 seconds
-                        var targetTime = Math.min(time1, time2); // Seek to the earlier time
-                        player1.seekTo(targetTime, true);
-                        player2.seekTo(targetTime, true);
+                    if (Math.abs(diff) > 0.005) { // If difference is more than 0.005 seconds
+                        // Adjust player times to synchronize
+                        if (diff > 0) {
+                            player1.seekTo(time2, true); // Adjust player1 to match player2
+                        } else {
+                            player2.seekTo(time1, true); // Adjust player2 to match player1
+                        }
                     }
                 }
             }, SYNC_INTERVAL); // Check sync every SYNC_INTERVAL milliseconds

@@ -3,112 +3,245 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VR YouTube Video Player</title>
+    <title>VR YouTube Video</title>
     <style>
         body {
             margin: 0;
-            font-family: Arial, sans-serif;
+            overflow: hidden;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background-color: #000;
-        }
-        .container {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .video-player {
+            color: #fff;
             position: relative;
-            width: 45vw;
-            height: 45vh;
-            background-color: #333;
-            margin: 0 10px;
-            overflow: hidden;
+            font-family: Arial, sans-serif;
         }
-        iframe {
-            width: 100%;
-            height: 100%;
-        }
-        .input-container {
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
+        .video-container {
             display: flex;
-            align-items: center;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            padding: 5px;
+            flex-direction: column; /* Change to column on mobile */
+            width: 100%;
+            height: calc(100% - 100px); /* Adjust height to leave space for controls */
+            position: relative;
         }
-        .input-container input {
-            width: 200px;
-            height: 25px;
+        .video-container iframe {
+            width: 100%;
+            height: 50%;
+            border: none;
+        }
+        .play-button, .url-input {
+            margin: 10px;
+            padding: 15px 20px;
+            background-color: #333;
+            color: #fff;
             border: none;
             border-radius: 5px;
-            padding: 5px;
-            margin-right: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            transition: background-color 0.3s;
+            width: 100%; /* Full width on mobile */
+            max-width: 300px;
+            box-sizing: border-box;
         }
-        .controls {
+        .play-button:hover, .url-input:focus {
+            background-color: #555;
+        }
+        .url-input {
+            margin-bottom: 20px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 5px;
+            color: #fff;
+            background-color: #222;
+        }
+        .controls-container {
             position: absolute;
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            z-index: 10;
+            text-align: center;
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
         }
-        #volume {
-            margin-bottom: 10px;
+        .hide-controls-button, .fullscreen-button {
+            position: absolute;
+            top: 10px;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 24px;
+            text-align: center;
+            line-height: 50px;
+            transition: background-color 0.3s;
         }
-        button {
-            margin: 5px;
+        .hide-controls-button:hover, .fullscreen-button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .hide-controls-button {
+            right: 80px;
+        }
+        .fullscreen-button {
+            right: 20px;
+        }
+        .hidden {
+            display: none;
+        }
+        /* Fullscreen Styles */
+        .fullscreen .video-container {
+            height: 100vh;
+            width: 100vw;
+            top: 0;
+            left: 0;
+            position: fixed;
+            z-index: 9;
+            flex-direction: row; /* Keep videos side by side in fullscreen */
+        }
+        .fullscreen .video-container iframe {
+            height: 100%;
+            width: 50%;
+        }
+        .fullscreen .controls-container {
+            display: none;
+        }
+
+        /* Mobile-Specific Styles */
+        @media (max-width: 768px) {
+            .video-container {
+                height: calc(100% - 120px);
+            }
+            .video-container iframe {
+                height: 100%;
+            }
+            .play-button, .url-input {
+                font-size: 16px;
+                padding: 10px;
+            }
+            .hide-controls-button, .fullscreen-button {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                line-height: 40px;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="video-player" id="player1"></div>
-        <div class="video-player" id="player2"></div>
+    <button class="hide-controls-button" id="hideControlsButton" aria-label="Hide Controls">×</button>
+    <button class="fullscreen-button" id="fullscreenButton" aria-label="Toggle Fullscreen">⛶</button>
+    <div class="controls-container" id="controlsContainer">
+        <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" aria-label="YouTube URL" />
+        <button class="play-button" id="playButton">Play Videos</button>
     </div>
-    <div class="input-container">
-        <input type="text" id="url" placeholder="Enter YouTube URL">
-        <button onclick="loadVideo()">Load Videos</button>
+    <div class="video-container">
+        <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
-    <div class="controls">
-        <input type="range" id="volume" min="0" max="100" value="100">
-        <button onclick="toggleHide()">Hide Buttons</button>
-    </div>
+
     <script>
-        function loadVideo() {
-            const url = document.getElementById('url').value;
-            const videoId = new URL(url).searchParams.get('v');
-            const iframes = `
-                <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            `;
-            document.getElementById('player1').innerHTML = iframes;
-            document.getElementById('player2').innerHTML = iframes;
-        }
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-        function toggleHide() {
-            const buttons = document.querySelectorAll('button');
-            buttons.forEach(button => {
-                button.style.display = button.style.display === 'none' ? 'inline' : 'none';
-            });
-        }
+        var player1, player2;
+        var isFullscreen = false;
+        var syncInterval;
 
-        document.getElementById('volume').addEventListener('input', function() {
-            const volume = this.value;
-            document.querySelectorAll('iframe').forEach(iframe => {
-                let src = iframe.src;
-                if (src.includes('volume=')) {
-                    src = src.replace(/volume=\d+/, `volume=${volume}`);
-                } else {
-                    src += `&volume=${volume}`;
+        function onYouTubeIframeAPIReady() {
+            player1 = new YT.Player('video1', {
+                events: {
+                    'onReady': onPlayerReady
                 }
-                iframe.src = src;
             });
+            player2 = new YT.Player('video2', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            if (player1 && player2) {
+                document.getElementById('playButton').disabled = false;
+            }
+        }
+
+        function loadVideo(url) {
+            try {
+                var videoId;
+                if (url.includes('youtu.be')) {
+                    videoId = url.split('youtu.be/')[1];
+                } else {
+                    videoId = new URL(url).searchParams.get('v');
+                }
+                if (videoId) {
+                    var embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+                    document.getElementById('video1').src = embedUrl;
+                    document.getElementById('video2').src = embedUrl;
+                } else {
+                    alert('Invalid YouTube URL');
+                }
+            } catch (e) {
+                alert('Error loading video');
+            }
+        }
+
+        function playBothVideos() {
+            var url = document.getElementById('urlInput').value;
+            if (url && player1 && player2) {
+                loadVideo(url);
+                player1.playVideo();
+                player2.playVideo();
+                player2.mute(); // Mute the second video
+
+                // Start synchronization check
+                startSyncCheck();
+            } else {
+                alert('Please enter a valid YouTube URL');
+            }
+        }
+
+        function startSyncCheck() {
+            if (syncInterval) clearInterval(syncInterval); // Clear previous interval if any
+
+            syncInterval = setInterval(function() {
+                if (player1 && player2) {
+                    var time1 = player1.getCurrentTime();
+                    var time2 = player2.getCurrentTime();
+                    var diff = Math.abs(time1 - time2);
+
+                    if (diff > 0.1) { // If difference is more than 0.1 seconds
+                        var targetTime = Math.min(time1, time2); // Seek to the earlier time
+                        player1.seekTo(targetTime, true);
+                        player2.seekTo(targetTime, true);
+                    }
+                }
+            }, 1000); // Check every second
+        }
+
+        document.getElementById('playButton').addEventListener('click', playBothVideos);
+
+        document.getElementById('hideControlsButton').addEventListener('click', function() {
+            var controlsContainer = document.getElementById('controlsContainer');
+            controlsContainer.classList.toggle('hidden');
+        });
+
+        document.getElementById('fullscreenButton').addEventListener('click', function() {
+            var body = document.body;
+            if (!isFullscreen) {
+                body.classList.add('fullscreen');
+                isFullscreen = true;
+            } else {
+                body.classList.remove('fullscreen');
+                isFullscreen = false;
+            }
         });
     </script>
 </body>

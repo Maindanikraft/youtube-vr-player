@@ -15,38 +15,53 @@
             height: 100vh;
             background-color: #000;
             color: #fff;
-            position: relative; /* Allows positioning of the buttons */
+            position: relative;
             font-family: Arial, sans-serif;
         }
         .video-container {
             display: flex;
+            justify-content: center;
+            align-items: center;
             width: 100%;
-            height: calc(100% - 80px); /* Adjust height to leave space for the controls */
+            height: calc(100% - 100px); /* Adjust height to leave space for controls */
             position: relative;
         }
-        .video-container iframe {
-            flex: 1;
+        .video-frame {
+            position: relative;
+            width: 45%;
+            padding-top: 45%; /* Aspect ratio 1:1 */
+            overflow: hidden;
+            border-radius: 50%;
+            mask-image: radial-gradient(circle at center, white 30%, transparent 100%);
+            margin: 0 2in; /* 4 inches total spacing between the videos */
+        }
+        .video-frame iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
             height: 100%;
             border: none;
         }
         .play-button, .url-input {
             margin: 10px;
-            padding: 10px 20px;
+            padding: 15px 20px;
             background-color: #333;
             color: #fff;
             border: none;
             border-radius: 5px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 18px;
             transition: background-color 0.3s;
+            width: 100%;
+            max-width: 300px;
+            box-sizing: border-box;
         }
         .play-button:hover, .url-input:focus {
             background-color: #555;
         }
         .url-input {
             margin-bottom: 20px;
-            width: 300px;
-            text-align: center;
             border: 1px solid #555;
             border-radius: 5px;
             padding: 5px;
@@ -55,50 +70,76 @@
         }
         .controls-container {
             position: absolute;
-            top: 10px;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 10; /* Ensure it appears above other elements */
+            z-index: 10;
             text-align: center;
+            width: 100%;
+            max-width: 300px;
+            padding: 10px;
         }
         .hide-controls-button, .fullscreen-button {
             position: absolute;
-            top: 20px;
-            width: 40px;
-            height: 40px;
-            background-color: rgba(255, 255, 255, 0.1); /* Transparent white */
+            top: 10px;
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
             color: #fff;
             border: none;
-            border-radius: 20px;
+            border-radius: 25px;
             cursor: pointer;
             font-size: 24px;
             text-align: center;
-            line-height: 40px;
+            line-height: 50px;
             transition: background-color 0.3s;
         }
         .hide-controls-button:hover, .fullscreen-button:hover {
             background-color: rgba(255, 255, 255, 0.3);
         }
         .hide-controls-button {
-            right: 70px; /* Adjust position to the right */
+            right: 80px;
         }
         .fullscreen-button {
-            right: 20px; /* Adjust position to the right */
+            right: 20px;
         }
         .hidden {
             display: none;
         }
-        /* Styles for fullscreen */
+        /* Fullscreen Styles */
         .fullscreen .video-container {
-            height: 100vh; /* Fullscreen height */
-            width: 100vw;  /* Fullscreen width */
+            height: 100vh;
+            width: 100vw;
             top: 0;
             left: 0;
             position: fixed;
-            z-index: 9; /* Ensure it is above other content */
+            z-index: 9;
+            flex-direction: row;
+            justify-content: space-around;
+        }
+        .fullscreen .video-frame {
+            width: 45%;
+            padding-top: 45%;
         }
         .fullscreen .controls-container {
-            display: none; /* Hide controls in fullscreen mode */
+            display: none;
+        }
+
+        /* Mobile-Specific Styles */
+        @media (max-width: 768px) {
+            .video-container {
+                height: calc(100% - 120px);
+            }
+            .play-button, .url-input {
+                font-size: 16px;
+                padding: 10px;
+            }
+            .hide-controls-button, .fullscreen-button {
+                width: 40px;
+                height: 40px;
+                font-size: 18px;
+                line-height: 40px;
+            }
         }
     </style>
 </head>
@@ -110,8 +151,12 @@
         <button class="play-button" id="playButton">Play Videos</button>
     </div>
     <div class="video-container">
-        <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div class="video-frame">
+            <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <div class="video-frame">
+            <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
     </div>
 
     <script>

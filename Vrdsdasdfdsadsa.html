@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VR YouTube Video</title>
+    <title>VR YouTube Video Sync</title>
     <style>
         body {
             margin: 0;
@@ -81,7 +81,7 @@
         .hide-controls-button, .fullscreen-button {
             position: absolute;
             top: 10px;
-            z-index: 20; /* Ensure buttons are above video players */
+            z-index: 20;
             width: 40px;
             height: 40px;
             background-color: rgba(255, 255, 255, 0.1);
@@ -160,7 +160,7 @@
 
         var player1, player2;
         var isFullscreen = false;
-        var syncInterval;
+        var syncIntervalTime = 800; // Adjust this value for optimal sync check interval
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -232,7 +232,7 @@
                         player2.seekTo(targetTime, true);
                     }
                 }
-            }, 900); // Check every 0.9 seconds
+            }, syncIntervalTime); // Check sync at defined interval
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);

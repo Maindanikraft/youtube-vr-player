@@ -32,9 +32,11 @@
             display: flex;
             justify-content: center;
             align-items: center;
+            position: relative;
             width: 100%;
             height: calc(100% - 60px); /* Adjust for controls height */
-            position: relative;
+            top: 50%;
+            transform: translateY(-50%);
         }
         .video-frame {
             position: relative;
@@ -55,7 +57,7 @@
         }
         .controls-container {
             position: absolute;
-            bottom: 10px;
+            top: 10px;
             left: 50%;
             transform: translateX(-50%);
             z-index: 10;
@@ -165,9 +167,8 @@
 
         var player1, player2;
         var syncInterval;
-        var isFullscreen = false;
         var syncIntervalTime = 500; // Check sync every 0.5 seconds
-        var syncThreshold = 0.1; // Synchronization threshold in seconds (100 milliseconds)
+        var syncThreshold = 0.09; // Synchronization threshold in seconds (90 milliseconds)
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -215,7 +216,7 @@
                 player1.playVideo();
                 player2.playVideo();
                 player1.unMute(); // Unmute the first video
-                player2.unMute(); // Unmute the second video
+                player2.mute();   // Mute the second video
 
                 // Start synchronization check
                 setTimeout(() => {

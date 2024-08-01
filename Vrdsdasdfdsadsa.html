@@ -31,10 +31,10 @@
             width: 90%;
             height: 80%;
             position: relative;
-            justify-content: space-between; /* Space between the players */
+            justify-content: space-between; /* Space between the videos */
         }
         .video-container iframe {
-            width: 48%; /* Slightly less than 50% to fit with margin */
+            width: calc(50% - 10px); /* Slightly smaller to fit spacing */
             height: 100%;
             border: none;
             background-color: #000;
@@ -234,6 +234,7 @@
         }
 
         function toggleFullscreen() {
+            var vrPlayerSection = document.querySelector('.vr-player');
             var fullscreenMode = document.getElementById('fullscreenMode');
             var body = document.body;
 

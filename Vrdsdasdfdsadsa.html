@@ -106,7 +106,27 @@
         .hidden {
             display: none;
         }
-        /* Fullscreen Styles */
+        .volume-bar {
+            position: absolute;
+            top: 50px;
+            right: 20px;
+            height: 100px;
+            width: 20px;
+            background-color: #333;
+            border-radius: 10px;
+            z-index: 20; /* Ensure it appears above other elements */
+        }
+        .volume-handle {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            border-radius: 50%;
+            cursor: pointer;
+            transform: translateY(-50%);
+        }
         .fullscreen .video-container {
             height: 100vh;
             width: 100vw;
@@ -120,7 +140,9 @@
         .fullscreen .controls-container {
             display: none;
         }
-        /* Mobile-Specific Styles */
+        .fullscreen .volume-bar {
+            top: 20px;
+        }
         @media (max-width: 768px) {
             .video-container {
                 flex-direction: row;
@@ -133,32 +155,6 @@
                 margin-bottom: 0;
             }
         }
-        /* Volume Bar Styles */
-        .volume-bar {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            height: 100px;
-            width: 10px;
-            background-color: #555;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 30; /* Ensure the volume bar is above everything */
-        }
-        .volume-handle {
-            position: absolute;
-            width: 20px;
-            height: 20px;
-            background-color: #fff;
-            border-radius: 50%;
-            left: -5px;
-            cursor: pointer;
-            z-index: 31; /* Ensure the volume handle is above the bar */
-        }
-        .hidden-volume-bar {
-            display: none;
-        }
     </style>
 </head>
 <body>
@@ -168,6 +164,9 @@
         <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" aria-label="YouTube URL" />
         <button class="play-button" id="playButton">Play Videos</button>
     </div>
+    <div class="volume-bar" id="volumeBar">
+        <div class="volume-handle" id="volumeHandle"></div>
+    </div>
     <div class="video-container">
         <div class="video-frame">
             <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
@@ -175,11 +174,6 @@
         <div class="video-frame">
             <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
-    </div>
-
-    <!-- Volume Bar -->
-    <div class="volume-bar" id="volumeBar">
-        <div class="volume-handle" id="volumeHandle"></div>
     </div>
 
     <script>
@@ -208,7 +202,6 @@
         function onPlayerReady(event) {
             if (player1 && player2) {
                 document.getElementById('playButton').disabled = false;
-                initializeVolumeBar();
             }
         }
 
@@ -238,8 +231,8 @@
                 loadVideo(url);
                 player1.playVideo();
                 player2.playVideo();
-                player2.mute(); // Mute the second video
-                initializeVolumeBar(); // Initialize volume bar
+
+                // Start synchronization check
                 startSyncCheck();
             } else {
                 alert('Please enter a valid YouTube URL');
@@ -264,15 +257,9 @@
             }, 1000); // Check every second
         }
 
-        function setVolume(value) {
-            player1.setVolume(value * 100); // Set volume between 0 and 100
-        }
-
-        function initializeVolumeBar() {
-            var volume = player1.getVolume() / 100;
-            var rect = volumeBar.getBoundingClientRect();
-            var y = (1 - volume) * rect.height;
-            volumeHandle.style.top = y + 'px';
+        function setVolume(volume) {
+            if (player1) player1.setVolume(volume * 100);
+            if (player2) player2.setVolume(volume * 100);
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
@@ -283,8 +270,7 @@
             controlsContainer.classList.toggle('hidden');
             volumeBar.classList.toggle('hidden');
         });
-
-        document.getElementById('fullscreenButton').addEventListener('click', function() {
+document.getElementById('fullscreenButton').addEventListener('click', function() {
             var body = document.body;
             if (!isFullscreen) {
                 body.classList.add('fullscreen');
@@ -295,33 +281,37 @@
             }
         });
 
-        // Volume Bar Dragging
-        var volumeBar = document.getElementById('volumeBar');
-        var volumeHandle = document.getElementById('volumeHandle');
-        var isDragging = false;
+        // Volume control logic
+        const volumeBar = document.getElementById('volumeBar');
+        const volumeHandle = document.getElementById('volumeHandle');
+        let isDragging = false;
 
-        volumeHandle.addEventListener('mousedown', function(event) {
-            isDragging = true;
-        });
+        function updateVolume(event) {
+            const rect = volumeBar.getBoundingClientRect();
+            const y = event.clientY - rect.top;
+            const volume = Math.max(0, Math.min(1, 1 - (y / rect.height))); // Volume ranges from 0 to 1
+            setVolume(volume);
 
-        document.addEventListener('mouseup', function(event) {
-            isDragging = false;
-        });
+            // Move handle
+            volumeHandle.style.top = `${Math.max(0, Math.min(rect.height - volumeHandle.offsetHeight, y - (volumeHandle.offsetHeight / 2)))}px`;
+        }
 
-        document.addEventListener('mousemove', function(event) {
+        volumeHandle.addEventListener('mousedown', () => { isDragging = true; });
+        window.addEventListener('mouseup', () => { isDragging = false; });
+        window.addEventListener('mousemove', (event) => {
             if (isDragging) {
-                var rect = volumeBar.getBoundingClientRect();
-                var y = event.clientY - rect.top;
-                var percentage = Math.max(0, Math.min(100, (100 - (y / rect.height) * 100)));
-                setVolume(percentage / 100);
-                volumeHandle.style.top = y + 'px';
+                updateVolume(event);
             }
         });
 
-        // Update volume handle position on volume change
-        player1.addEventListener('onVolumeChange', function() {
-            initializeVolumeBar();
-        });
+        // Initialize with videos unmuted
+        function initVolume() {
+            player1.unMute();
+            player2.unMute();
+            setVolume(1); // Set initial volume to 100%
+        }
+
+        window.addEventListener('load', initVolume);
     </script>
 </body>
 </html>

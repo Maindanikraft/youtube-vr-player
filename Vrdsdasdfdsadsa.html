@@ -139,7 +139,7 @@
             margin-bottom: 20px;
         }
         .vr-player iframe {
-            width: 45%; /* Slightly smaller size */
+            width: 45%; /* Adjusted size */
             height: 250px; /* Adjusted height */
             border: none;
             background-color: #000; /* Ensure pitch black behind video */
@@ -409,16 +409,8 @@
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
                     }
-
-                    // Reset videos if they reach or exceed 3 seconds, but do not stop at 5 seconds
-                    if (time1 >= 3) {
-                        player1.seekTo(3, true); // Reset to 3 seconds
-                    }
-                    if (time2 >= 3) {
-                        player2.seekTo(3, true); // Reset to 3 seconds
-                    }
                 }
-            }, 1000); // Check every second
+            }, 100); // Check every 100ms
         }
 
         function playExampleVideo() {
@@ -456,6 +448,8 @@
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
         document.querySelector('.example-button').addEventListener('click', playExampleVideo);
+        document.querySelector('.hide-buttons').addEventListener('click', toggleControls);
+        document.querySelector('.fullscreen-button').addEventListener('click', toggleFullscreen);
 
         // Smooth Scroll for Navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {

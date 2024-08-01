@@ -19,7 +19,7 @@
         }
         .video-container {
             display: flex;
-            justify-content: space-evenly;
+            justify-content: center;
             align-items: center;
             width: 100%;
             height: 100%;
@@ -28,8 +28,8 @@
         }
         .video-frame {
             position: relative;
-            width: 48%;
-            padding-top: 48%;
+            width: 90%;
+            padding-top: 90%;
             overflow: hidden;
             border-radius: 50%;
             mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
@@ -38,10 +38,10 @@
         }
         .video-frame iframe {
             position: absolute;
-            top: -20%;
-            left: -20%;
-            width: 140%;
-            height: 140%;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             border: none;
         }
         .play-button, .url-input {
@@ -111,7 +111,7 @@
             height: 100vh;
             width: 100vw;
             flex-direction: row;
-            justify-content: space-evenly;
+            justify-content: center;
         }
         .fullscreen .video-frame {
             width: 45%;
@@ -124,13 +124,13 @@
         /* Mobile-Specific Styles */
         @media (max-width: 768px) {
             .video-container {
-                flex-direction: row;
-                justify-content: space-evenly;
+                flex-direction: column;
+                justify-content: center;
                 height: 100%;
             }
             .video-frame {
-                width: 45%;
-                padding-top: 45%;
+                width: 90%;
+                padding-top: 90%;
                 margin-bottom: 0;
             }
         }
@@ -151,7 +151,6 @@
             <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
-    <div id="version" style="position: absolute; top: 10px; left: 10px; color: #fff;">Version 2.2</div>
 
     <script>
         var tag = document.createElement('script');
@@ -162,7 +161,7 @@
         var player1, player2;
         var isFullscreen = false;
         var syncInterval;
-        var syncCheckInterval = 500; // Check synchronization every 500 milliseconds
+        var syncIntervalTime = 800; // Adjust this value for optimal sync check interval
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -209,6 +208,8 @@
                 loadVideo(url);
                 player1.playVideo();
                 player2.playVideo();
+                player1.unMute(); // Unmute the first video
+                player2.unMute(); // Unmute the second video
 
                 // Start synchronization check
                 startSyncCheck();
@@ -226,14 +227,13 @@
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > 0.005) { // If difference is more than 0.005 seconds
-                        // Adjust the video to be in sync
+                    if (diff > 0.01) { // If difference is more than 0.01 seconds
                         var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
                     }
                 }
-            }, syncCheckInterval); // Check every 500 milliseconds
+            }, syncIntervalTime); // Check sync at defined interval
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);

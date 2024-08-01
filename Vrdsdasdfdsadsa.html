@@ -10,16 +10,13 @@
             margin: 0;
             overflow: hidden;
             font-family: Arial, sans-serif;
-            background-color: #f0f0f0; /* Home page background color */
+            background-color: #f0f0f0; /* Updated home page background color */
             color: #333;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
         }
         header {
             background-color: #222;
             color: #fff;
-            padding: 10px;
+            padding: 20px;
             text-align: center;
             position: fixed;
             width: 100%;
@@ -29,10 +26,10 @@
         }
         header h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 2rem;
         }
         nav {
-            margin: 10px 0;
+            margin: 20px 0;
         }
         nav ul {
             list-style-type: none;
@@ -41,19 +38,19 @@
         }
         nav ul li {
             display: inline;
-            margin: 0 10px;
+            margin: 0 15px;
         }
         nav ul li a {
             color: #fff;
             text-decoration: none;
-            font-size: 1rem;
+            font-size: 1.2rem;
         }
         nav ul li a:hover {
             text-decoration: underline;
         }
         section {
             display: none;
-            padding: 50px 10px 10px;
+            padding: 60px 20px 20px;
             text-align: center;
         }
         section.active {
@@ -62,52 +59,52 @@
         .hero-section {
             background-color: #222;
             color: #fff;
-            padding: 60px 10px 40px;
+            padding: 100px 20px 60px;
         }
         .hero-section h2 {
-            font-size: 1.8rem;
+            font-size: 2.5rem;
         }
         .hero-section p {
-            font-size: 1rem;
+            font-size: 1.2rem;
         }
         .vr-section {
             background-color: #000; /* Pitch black background for VR section */
             color: #fff;
-            padding: 40px 10px;
+            padding: 60px 20px;
             text-align: center;
         }
         .vr-player {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 3%; /* Reduced space between players */
+            gap: 4%; /* Space between players */
             flex-direction: row;
         }
         .vr-player iframe {
-            width: 40%; /* Slightly smaller size */
-            height: 250px; /* Adjusted height */
+            width: 45%; /* Slightly larger and with rounded corners */
+            height: 400px;
             border: none;
-            border-radius: 10px;
+            border-radius: 15px;
         }
         .vr-separator {
-            width: 4px;
+            width: 5px;
             height: 100%;
             background-color: #555;
         }
         .controls-container {
-            margin-top: 10px;
+            margin-top: 20px;
         }
         .controls-container input,
         .controls-container button {
-            margin: 5px;
-            padding: 5px 10px;
-            font-size: 0.9rem;
+            margin: 10px;
+            padding: 10px 15px;
+            font-size: 1rem;
             border-radius: 5px;
             border: none;
         }
         .controls-container input {
             width: 80%;
-            max-width: 240px;
+            max-width: 300px;
             background-color: #222;
             color: #fff;
         }
@@ -128,7 +125,7 @@
         }
         .about {
             background-color: #eee;
-            padding: 40px 10px;
+            padding: 60px 20px;
             text-align: center;
         }
         .about h3 {
@@ -137,26 +134,26 @@
         .features {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 20px;
             flex-wrap: wrap;
             margin: 0 auto;
         }
         .feature-item {
             background-color: #fff;
             border-radius: 10px;
-            padding: 10px;
-            width: 150px;
+            padding: 20px;
+            width: 200px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
         }
         .feature-item:hover {
-            transform: translateY(-5px);
+            transform: translateY(-10px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
         footer {
             background-color: #222;
             color: #fff;
-            padding: 10px;
+            padding: 20px;
             text-align: center;
         }
         footer a {
@@ -168,53 +165,24 @@
         }
         /* Fullscreen Styles */
         .fullscreen .vr-player iframe {
-            height: 80vh;
-            width: 80vw;
+            height: 100vh;
+            width: 50vw;
         }
         /* Responsive Styles */
         @media (max-width: 768px) {
-            header {
-                padding: 10px 5px;
-            }
-            header h1 {
-                font-size: 1.2rem;
-            }
             .hero-section {
-                padding: 50px 5px 30px;
-            }
-            .hero-section h2 {
-                font-size: 1.5rem;
-            }
-            .hero-section p {
-                font-size: 0.9rem;
-            }
-            .vr-section {
-                padding: 30px 5px;
+                padding: 80px 20px 40px;
             }
             .vr-player {
                 flex-direction: column;
-                gap: 2%;
             }
             .vr-player iframe {
                 width: 90%;
-                height: 200px;
+                height: 300px;
+                margin-bottom: 10px;
             }
             .vr-separator {
                 display: none;
-            }
-            .controls-container {
-                margin-top: 5px;
-            }
-            .controls-container input,
-            .controls-container button {
-                font-size: 0.8rem;
-                padding: 5px 8px;
-            }
-            .about {
-                padding: 30px 5px;
-            }
-            .feature-item {
-                width: 120px;
             }
         }
     </style>
@@ -281,28 +249,31 @@
     </section>
 
     <!-- Contact Section -->
-    <section id="contact" class="contact">
+    <section id="contact" class="about">
         <div class="content">
             <h3>Contact Us</h3>
-            <p>Get in touch with us for more information.</p>
-            <p>Email: <a href="mailto:info@vrsite.com">info@vrsite.com</a></p>
-            <p>Website: <a href="http://vrsite.com" target="_blank">vrsite.com</a></p>
+            <p>Have questions or feedback? Reach out to us!</p>
+            <p>Email us at <a href="mailto:support@vrsite.com">support@vrsite.com</a> or call us at (123) 456-7890.</p>
         </div>
     </section>
 
+    <!-- Footer -->
     <footer>
-        <p>&copy; 2024 Advanced VR Video Site. All rights reserved. <a href="#contact">Contact</a></p>
+        <p>&copy; 2024 Advanced VR Video Site. All rights reserved.</p>
+        <p>Follow us on 
+            <a href="https://twitter.com/vrsite" target="_blank">Twitter</a>, 
+            <a href="https://facebook.com/vrsite" target="_blank">Facebook</a>, and 
+            <a href="https://instagram.com/vrsite" target="_blank">Instagram</a>.
+        </p>
     </footer>
 
-    <script src="https://www.youtube.com/iframe_api"></script>
+    <!-- JavaScript for Navigation, VR Player, and Animations -->
     <script>
-        // Navigation Link Activation
+        // Navigation handling
         document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelectorAll('section').forEach(section => {
-                    section.classList.remove('active');
-                });
+            link.addEventListener('click', function(event) {
+                event.preventDefault();
+                document.querySelectorAll('section').forEach(section => section.classList.remove('active'));
                 document.querySelector(this.getAttribute('href')).classList.add('active');
             });
         });
@@ -311,7 +282,6 @@
         var player1, player2;
         var isFullscreen = false;
         var syncInterval;
-        var buffering = false;
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -371,33 +341,18 @@
             if (syncInterval) clearInterval(syncInterval); // Clear previous interval if any
 
             syncInterval = setInterval(function() {
-                if (player1 && player2 && !buffering) {
+                if (player1 && player2) {
                     var time1 = player1.getCurrentTime();
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > 0.05) { // Reduced difference threshold
+                    if (diff > 0.09) { // If difference is more than 0.09 seconds
                         var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
                     }
-
-                    // Adjust playback rate to reduce lag
-                    var playbackRate1 = player1.getPlaybackRate();
-                    var playbackRate2 = player2.getPlaybackRate();
-                    if (playbackRate1 !== playbackRate2) {
-                        player1.setPlaybackRate(playbackRate2);
-                    }
                 }
             }, 500); // Check every half second
-        }
-
-        function onBuffering(event) {
-            buffering = true;
-        }
-
-        function onBufferingEnd(event) {
-            buffering = false;
         }
 
         function playExampleVideo() {
@@ -409,7 +364,22 @@
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
-        document.querySelector('.example-button').addEventListener('click', playExampleVideo);
+
+        document.getElementById('hideControlsButton').addEventListener('click', function() {
+            var controlsContainer = document.getElementById('controlsContainer');
+            controlsContainer.classList.toggle('hidden');
+        });
+
+        document.getElementById('fullscreenButton').addEventListener('click', function() {
+            var body = document.body;
+            if (!isFullscreen) {
+                body.classList.add('fullscreen');
+                isFullscreen = true;
+            } else {
+                body.classList.remove('fullscreen');
+                isFullscreen = false;
+            }
+        });
 
         // Smooth Scroll for Navigation
         document.querySelectorAll('a[href^="#"]').forEach(anchor => {
@@ -434,8 +404,6 @@
         });
 
         window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-        window.onBuffering = onBuffering;
-        window.onBufferingEnd = onBufferingEnd;
     </script>
 </body>
 </html>

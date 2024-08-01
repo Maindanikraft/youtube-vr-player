@@ -142,7 +142,6 @@
             width: 45%; /* Slightly smaller size */
             height: 250px; /* Adjusted height */
             border: none;
-            border-radius: 15px; /* Rounded corners */
             background-color: #000; /* Ensure pitch black behind video */
         }
         .vr-separator {
@@ -165,7 +164,6 @@
         .fullscreen-mode iframe {
             width: 70vw; /* Responsive width */
             height: 70vh; /* Responsive height */
-            border-radius: 15px; /* Rounded corners */
             background-color: #000; /* Ensure pitch black behind video */
         }
         .about {
@@ -412,14 +410,12 @@
                         player2.seekTo(targetTime, true);
                     }
 
-                    // Reset videos if they reach or exceed 3 seconds
+                    // Reset videos if they reach or exceed 3 seconds, but do not stop at 5 seconds
                     if (time1 >= 3) {
-                        player1.seekTo(5, true);
-                        player1.pauseVideo();
+                        player1.seekTo(3, true); // Reset to 3 seconds
                     }
                     if (time2 >= 3) {
-                        player2.seekTo(5, true);
-                        player2.pauseVideo();
+                        player2.seekTo(3, true); // Reset to 3 seconds
                     }
                 }
             }, 1000); // Check every second

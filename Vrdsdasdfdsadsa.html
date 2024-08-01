@@ -3,251 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VR YouTube Video Sync</title>
+    <title>VR YouTube Video Player</title>
     <style>
         body {
             margin: 0;
-            overflow: hidden;
+            font-family: Arial, sans-serif;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
             background-color: #000;
-            color: #fff;
-            font-family: Arial, sans-serif;
-            position: relative;
         }
-        .video-container {
+        .container {
             display: flex;
             justify-content: center;
             align-items: center;
-            width: 100%;
-            height: 80vh; /* Adjust for control height */
-            position: relative;
         }
-        .video-frame {
+        .video-player {
             position: relative;
-            width: 50%;
-            padding-top: 28.5%;
-            border-radius: 50%;
-            mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
-            -webkit-mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
+            width: 50vw;
+            height: 50vh;
+            background-color: #333;
+            margin: 0 10px;
+            overflow: hidden;
         }
-        .video-frame iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
+        iframe {
             width: 100%;
             height: 100%;
-            border: none;
         }
-        .controls-container, .hide-controls-button {
-            position: fixed;
-            top: 10px;
+        .controls {
+            position: absolute;
+            bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 10;
-            text-align: center;
-            width: 100%;
-            max-width: 300px;
-            padding: 10px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        .hide-controls-button {
-            position: absolute;
-            top: 10px;
-            width: 50px;
-            height: 50px;
-            background-color: rgba(255, 255, 255, 0.1);
-            color: #fff;
-            border: none;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 24px;
-            text-align: center;
-            line-height: 50px;
-            transition: background-color 0.3s;
+        #volume {
+            margin-bottom: 10px;
         }
-        .hide-controls-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
-        }
-        .hidden {
-            display: none;
-        }
-        .version {
-            position: fixed;
-            top: 10px;
-            left: 10px;
-            background-color: #333;
-            padding: 5px;
-            border-radius: 5px;
-            font-size: 14px;
-        }
-        /* Fullscreen Styles */
-        .fullscreen .video-container {
-            height: 100vh;
-            width: 100vw;
-            top: 0;
-            left: 0;
-            position: fixed;
-            z-index: 9;
-            flex-direction: row;
-        }
-        .fullscreen .video-frame {
-            width: 50%;
-            padding-top: 50%;
-        }
-        .fullscreen .controls-container {
-            display: none;
-        }
-        /* Mobile-Specific Styles */
-        @media (max-width: 768px) {
-            .video-container {
-                height: calc(100% - 120px); /* Account for controls height */
-            }
-            .video-frame {
-                width: 48%;
-                padding-top: 48%;
-            }
-            .controls-container {
-                position: static;
-                transform: none;
-            }
-            .play-button, .url-input {
-                width: 80%;
-            }
-            .hide-controls-button {
-                width: 40px;
-                height: 40px;
-                font-size: 18px;
-                line-height: 40px;
-                top: auto;
-                bottom: 10px;
-                left: 50%;
-                transform: translateX(-50%);
-                position: absolute;
-            }
+        button {
+            margin: 5px;
         }
     </style>
 </head>
 <body>
-    <div class="version">Version 2.1</div>
-    <button class="hide-controls-button" id="hideControlsButton" aria-label="Hide Controls">×</button>
-    <div class="controls-container" id="controlsContainer">
-        <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" aria-label="YouTube URL" />
-        <button class="play-button" id="playButton">Play Videos</button>
-    </div>
-    <div class="video-container">
-        <div class="video-frame">
-            <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+    <div class="container">
+        <div class="video-player" id="player1">
+            <input type="text" id="url1" placeholder="Enter YouTube URL">
+            <button onclick="loadVideo('player1', 'url1')">Load Video 1</button>
         </div>
-        <div class="video-frame">
-            <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div class="video-player" id="player2">
+            <input type="text" id="url2" placeholder="Enter YouTube URL">
+            <button onclick="loadVideo('player2', 'url2')">Load Video 2</button>
         </div>
     </div>
-
+    <div class="controls">
+        <input type="range" id="volume" min="0" max="100" value="100">
+        <button onclick="toggleHide()">Hide Buttons</button>
+    </div>
     <script>
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+        function loadVideo(playerId, urlId) {
+            const player = document.getElementById(playerId);
+            const url = document.getElementById(urlId).value;
+            const videoId = new URL(url).searchParams.get('v');
+            player.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+        }
 
-        var player1, player2;
-        var isFullscreen = false;
-        var syncIntervalTime = 1000; // Check sync every 1 second
-        var syncThreshold = 0.09; // Synchronization threshold in seconds
-
-        function onYouTubeIframeAPIReady() {
-            player1 = new YT.Player('video1', {
-                events: {
-                    'onReady': onPlayerReady
-                }
-            });
-            player2 = new YT.Player('video2', {
-                events: {
-                    'onReady': onPlayerReady
-                }
+        function toggleHide() {
+            const buttons = document.querySelectorAll('button');
+            buttons.forEach(button => {
+                button.style.display = button.style.display === 'none' ? 'inline' : 'none';
             });
         }
 
-        function onPlayerReady(event) {
-            if (player1 && player2) {
-                document.getElementById('playButton').disabled = false;
-            }
-        }
-
-        function loadVideo(url) {
-            try {
-                var videoId;
-                if (url.includes('youtu.be')) {
-                    videoId = url.split('youtu.be/')[1];
+        document.getElementById('volume').addEventListener('input', function() {
+            const volume = this.value;
+            document.querySelectorAll('iframe').forEach(iframe => {
+                let src = iframe.src;
+                if (src.includes('volume=')) {
+                    src = src.replace(/volume=\d+/, `volume=${volume}`);
                 } else {
-                    videoId = new URL(url).searchParams.get('v');
+                    src += `&volume=${volume}`;
                 }
-                if (videoId) {
-                    var embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
-                    document.getElementById('video1').src = embedUrl;
-                    document.getElementById('video2').src = embedUrl;
-                } else {
-                    alert('Invalid YouTube URL');
-                }
-            } catch (e) {
-                alert('Error loading video');
-            }
-        }
-
-        function playBothVideos() {
-            var url = document.getElementById('urlInput').value;
-            if (url && player1 && player2) {
-                loadVideo(url);
-                player1.playVideo();
-                player2.playVideo();
-                player1.unMute(); // Unmute the first video
-                player2.mute();   // Mute the second video
-
-                // Start synchronization check
-                startSyncCheck();
-            } else {
-                alert('Please enter a valid YouTube URL');
-            }
-        }
-
-        function startSyncCheck() {
-            if (syncInterval) clearInterval(syncInterval); // Clear previous interval if any
-
-            syncInterval = setInterval(function() {
-                if (player1 && player2) {
-                    var time1 = player1.getCurrentTime();
-                    var time2 = player2.getCurrentTime();
-                    var diff = Math.abs(time1 - time2);
-
-                    if (diff > syncThreshold) { // If difference exceeds the sync threshold
-                        var targetTime = Math.min(time1, time2); // Seek to the earlier time
-                        player1.seekTo(targetTime, true);
-                        player2.seekTo(targetTime, true);
-                    }
-                }
-            }, syncIntervalTime); // Check every second
-        }
-
-        document.getElementById('playButton').addEventListener('click', playBothVideos);
-
-        document.getElementById('hideControlsButton').addEventListener('click', function() {
-            var controlsContainer = document.getElementById('controlsContainer');
-            var hideControlsButton = document.getElementById('hideControlsButton');
-            controlsContainer.classList.toggle('hidden');
-            hideControlsButton.classList.toggle('hidden');
-        });
-
-        document.getElementById('fullscreenButton').addEventListener('click', function() {
-            var body = document.body;
-            if (!isFullscreen) {
-                body.classList.add('fullscreen');
-                isFullscreen = true;
-            } else {
-                body.classList.remove('fullscreen');
-                isFullscreen = false;
-            }
+                iframe.src = src;
+            });
         });
     </script>
 </body>

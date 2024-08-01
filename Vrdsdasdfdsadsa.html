@@ -209,7 +209,11 @@
                 player1.playVideo();
                 player2.playVideo();
                 player1.unMute(); // Unmute the first video
-                player2.mute();  // Mute the second video
+                player2.unMute();  // Unmute the second video
+
+                // Set maximum volume
+                player1.setVolume(100);
+                player2.setVolume(100);
 
                 // Start synchronization check
                 startSyncCheck();
@@ -227,13 +231,13 @@
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > 0.05) { // If difference is more than 0.05 seconds
+                    if (diff > 0.005) { // If difference is more than 0.005 seconds
                         var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
                     }
                 }
-            }, 1000); // Check every second
+            }, 50); // Check every 50 milliseconds for finer granularity
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);

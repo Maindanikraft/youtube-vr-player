@@ -9,7 +9,6 @@
             margin: 0;
             overflow: hidden;
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
             height: 100vh;
@@ -20,15 +19,18 @@
         }
         .video-container {
             display: flex;
-            flex-direction: column; /* Change to column on mobile */
-            width: 100%;
-            height: calc(100% - 100px); /* Adjust height to leave space for controls */
+            justify-content: center;
+            align-items: center;
             position: relative;
         }
         .video-container iframe {
-            width: 100%;
-            height: 50%;
+            width: 50vw;
+            height: calc(50vw / 16 * 9); /* Maintain 16:9 aspect ratio */
+            max-height: 50vh;
             border: none;
+        }
+        .video-separator {
+            width: 101.6mm; /* 4 inches in mm */
         }
         .play-button, .url-input {
             margin: 10px;
@@ -40,7 +42,7 @@
             cursor: pointer;
             font-size: 18px;
             transition: background-color 0.3s;
-            width: 100%; /* Full width on mobile */
+            width: 100%;
             max-width: 300px;
             box-sizing: border-box;
         }
@@ -101,7 +103,7 @@
             left: 0;
             position: fixed;
             z-index: 9;
-            flex-direction: row; /* Keep videos side by side in fullscreen */
+            flex-direction: row;
         }
         .fullscreen .video-container iframe {
             height: 100%;
@@ -141,6 +143,7 @@
     </div>
     <div class="video-container">
         <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        <div class="video-separator"></div>
         <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
 
@@ -217,7 +220,7 @@
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > 0.1) { // If difference is more than 0.1 seconds
+                    if (diff > 0.09) { // Synchronization threshold updated
                         var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);

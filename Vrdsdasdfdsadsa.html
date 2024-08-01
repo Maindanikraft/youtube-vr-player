@@ -160,6 +160,7 @@
             border-radius: 50%;
             position: absolute;
             left: -5px;
+            top: 0;
             cursor: pointer;
         }
     </style>
@@ -287,38 +288,9 @@
 
         document.getElementById('hideControlsButton').addEventListener('click', function() {
             var controlsContainer = document.getElementById('controlsContainer');
+            var volumeContainer = document.getElementById('volumeContainer');
             controlsContainer.classList.toggle('hidden');
-            document.getElementById('volumeContainer').classList.toggle('hidden');
+            volumeContainer.classList.toggle('hidden');
         });
 
         document.getElementById('fullscreenButton').addEventListener('click', function() {
-            var body = document.body;
-            if (!isFullscreen) {
-                body.classList.add('fullscreen');
-                isFullscreen = true;
-            } else {
-                body.classList.remove('fullscreen');
-                isFullscreen = false;
-            }
-        });
-
-        // Volume bar interaction
-        const volumeBar = document.getElementById('volumeBar');
-        const volumeHandle = document.getElementById('volumeHandle');
-
-        volumeHandle.addEventListener('mousedown', function(event) {
-            event.preventDefault(); // Prevent default behavior to avoid text selection
-            updateVolume(event);
-            document.addEventListener('mousemove', updateVolume);
-        });
-
-        document.addEventListener('mouseup', function() {
-            document.removeEventListener('mousemove', updateVolume);
-        });
-
-        // Initialize
-        setVolume(volume);
-        document.getElementById('volumeHandle').style.top = '50%';
-    </script>
-</body>
-</html>

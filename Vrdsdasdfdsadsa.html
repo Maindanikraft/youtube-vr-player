@@ -26,12 +26,12 @@
             position: relative;
             flex-direction: row;
             overflow: hidden;
+            gap: 10px;
         }
         .video-frame {
             position: relative;
-            width: 45%;
-            padding-top: 45%;
-            margin: 0 10px;
+            width: 50%;
+            padding-top: 50%;
             border-radius: 50%;
             mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
             -webkit-mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
@@ -99,10 +99,11 @@
         .fullscreen .video-container {
             height: 100vh;
             width: 100vw;
+            flex-direction: row;
         }
         .fullscreen .video-frame {
-            width: 48%;
-            padding-top: 48%;
+            width: 50%;
+            padding-top: 50%;
         }
         .fullscreen .controls-container {
             display: none;
@@ -110,14 +111,14 @@
         /* Mobile-Specific Styles */
         @media (max-width: 768px) {
             .video-container {
-                flex-direction: column;
-                height: 100%;
-                justify-content: center;
+                flex-direction: row;
+                justify-content: space-between;
+                height: calc(100% - 60px); /* Account for controls height */
             }
             .video-frame {
-                width: 90%;
-                padding-top: 90%;
-                margin: 10px 0;
+                width: 48%;
+                padding-top: 48%;
+                margin: 0;
             }
             .controls-container {
                 position: static;
@@ -152,7 +153,6 @@
     </div>
 
     <script>
-        // Load YouTube IFrame API
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -210,7 +210,6 @@
                 player1.unMute(); // Unmute the first video
                 player2.unMute(); // Unmute the second video
 
-                // Initialize sync worker
                 if (syncWorker) syncWorker.terminate();
                 syncWorker = new Worker('sync-worker.js');
                 syncWorker.postMessage({ action: 'start', player1: player1, player2: player2 });
@@ -219,7 +218,6 @@
             }
         }
 
-        // Event listeners for buttons
         document.getElementById('playButton').addEventListener('click', playBothVideos);
 
         document.getElementById('hideControlsButton').addEventListener('click', function() {
@@ -238,20 +236,19 @@
             }
         });
     </script>
-    <!-- Web Worker Script -->
     <script id="sync-worker-script" type="javascript/worker">
         self.onmessage = function(e) {
             var player1 = e.data.player1;
             var player2 = e.data.player2;
-            var syncIntervalTime = 100; // High-resolution interval
+            var syncIntervalTime = 100; // Adjust as needed
 
             function sync() {
                 var time1 = player1.getCurrentTime();
                 var time2 = player2.getCurrentTime();
                 var diff = Math.abs(time1 - time2);
 
-                if (diff > 0.01) { // If difference is more than 0.01 seconds
-                    var targetTime = Math.min(time1, time2); // Seek to the earlier time
+                if (diff > 0.01) { // Adjust sync threshold
+                    var targetTime = Math.min(time1, time2);
                     player1.seekTo(targetTime, true);
                     player2.seekTo(targetTime, true);
                 }

@@ -196,7 +196,8 @@
                 loadVideo(url);
                 player1.playVideo();
                 player2.playVideo();
-                player2.mute(); // Mute the second video
+                player1.mute(); // Mute Player 1
+                player2.unMute(); // Unmute Player 2
                 startSyncCheck();
             } else {
                 alert('Please enter a valid YouTube URL');
@@ -254,11 +255,8 @@
         document.querySelector('#playButton').addEventListener('click', playBothVideos);
         document.querySelector('#hideControlsButton').addEventListener('click', toggleControls);
         document.querySelector('#fullscreenButton').addEventListener('click', toggleFullscreen);
-        document.querySelector('#exitFullscreenButton').addEventListener('click', function() {
-            document.querySelector('.fullscreen-mode').style.display = 'none';
-            document.body.style.overflow = 'auto';
-            isFullscreen = false;
-        });
+        document.querySelector('#exitFullscreenButton').addEventListener('click', toggleFullscreen);
+
     </script>
 </body>
 </html>

@@ -3,82 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Advanced VR Video Site</title>
+    <title>VR Video Synchronization</title>
     <style>
         body {
             margin: 0;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
             background-color: #000;
             color: #fff;
             font-family: Arial, sans-serif;
         }
-        .nav {
-            display: flex;
-            justify-content: center;
-            padding: 10px;
-            background-color: #111;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            z-index: 1000;
-        }
-        .nav a {
-            color: #fff;
-            text-decoration: none;
-            padding: 10px 20px;
-            font-size: 18px;
-            transition: background-color 0.3s;
-        }
-        .nav a:hover {
-            background-color: #333;
-        }
-        section {
-            display: none;
-            padding: 20px;
-            height: 100vh;
-            background-color: #000;
-            color: #fff;
-            box-sizing: border-box;
-        }
-        section.active {
-            display: block;
-        }
         .vr-player {
+            position: relative;
+            width: 100%;
+            height: 100%;
             display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: calc(100vh - 80px); /* Adjust to fit content */
-            width: 100vw;
-            background-color: #000;
+        }
+        .video-container {
+            display: flex;
+            width: 90%;
+            height: 80%;
             position: relative;
         }
-        .vr-player iframe {
-            width: calc(50% - 2px);
+        .video-container iframe {
+            width: 50%;
             height: 100%;
             border: none;
+            background-color: #000;
         }
         .controls-container {
             position: absolute;
             top: 10px;
-            left: 10px;
-            z-index: 10;
-            display: flex;
-            flex-direction: column;
-        }
-        .control-button {
-            background-color: #111;
-            color: #fff;
-            border: 1px solid #333;
-            border-radius: 5px;
-            padding: 10px;
-            margin: 5px 0;
-            cursor: pointer;
+            width: 90%;
             text-align: center;
-            transition: background-color 0.3s;
-            width: 120px; /* Adjusted for consistency */
         }
-        .control-button:hover {
+        .button {
+            margin: 5px;
+            padding: 10px 20px;
             background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s;
+            display: inline-block;
+        }
+        .button:hover {
+            background-color: #555;
+        }
+        .url-input {
+            margin-top: 10px;
+            border: 1px solid #555;
+            border-radius: 5px;
+            padding: 5px;
+            color: #fff;
+            background-color: #222;
+            width: calc(100% - 40px);
+            max-width: 400px;
+        }
+        .example-button {
+            margin-top: 10px;
         }
         .fullscreen-mode {
             display: none;
@@ -90,96 +82,72 @@
             background-color: #000;
             z-index: 1000;
             flex-direction: row;
+            justify-content: center;
+            align-items: center;
         }
         .fullscreen-mode iframe {
             width: 50%;
             height: 100%;
         }
-        .about, .contact {
-            padding: 20px;
-        }
-        .contact p {
-            margin: 0;
-        }
-        footer {
-            background-color: #111;
-            padding: 10px;
+        .fullscreen-mode .button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-radius: 25px;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
             text-align: center;
-            color: #fff;
+            font-size: 24px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        footer a {
-            color: #fff;
+        .fullscreen-mode .button:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        .contact-section {
+            margin-top: 20px;
+            text-align: center;
+        }
+        .contact-section a {
+            color: #00f;
             text-decoration: none;
+        }
+        .contact-section a:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="nav">
-        <a href="#home" class="nav-link">Home</a>
-        <a href="#vr-player" class="nav-link">VR Player</a>
-        <a href="#about" class="nav-link">About</a>
-        <a href="#contact" class="nav-link">Contact</a>
+    <div class="vr-player">
+        <div class="video-container">
+            <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <div class="controls-container">
+            <button class="button hide-buttons" id="hideControlsButton">Hide Buttons</button>
+            <button class="button fullscreen-button" id="fullscreenButton">⛶</button>
+            <button class="button example-button" id="exampleButton">Play Example Video</button>
+            <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" aria-label="YouTube URL" />
+        </div>
+        <div class="fullscreen-mode" id="fullscreenMode">
+            <iframe id="fullscreenVideo1" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe id="fullscreenVideo2" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <button class="button" id="exitFullscreenButton">✖</button>
+        </div>
+    </div>
+    <div class="contact-section">
+        <p>Contact me: <a href="mailto:maindanikraft@gmail.com">maindanikraft@gmail.com</a></p>
+        <p>Discord: <a href="https://discord.com/users/Brawlegal" target="_blank">Brawlegal</a></p>
     </div>
 
-    <!-- Home Section -->
-    <section id="home" class="active">
-        <h1>Welcome to the Advanced VR Video Site</h1>
-        <p>Your destination for synchronized VR video playback and more.</p>
-    </section>
-
-    <!-- VR Player Section -->
-    <section id="vr-player">
-        <div class="vr-player">
-            <div class="controls-container">
-                <input type="text" id="urlInput" class="control-button" placeholder="Enter YouTube URL">
-                <button id="playButton" class="control-button">Play Videos</button>
-                <button class="control-button example-button">Example Video</button>
-                <button class="control-button hide-buttons">Hide Buttons</button>
-                <button class="control-button fullscreen-button">Fullscreen</button>
-            </div>
-            <div class="fullscreen-mode" id="fullscreenMode">
-                <iframe id="fullscreenVideo1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                <iframe id="fullscreenVideo2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            </div>
-            <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section id="about">
-        <h3>About Us</h3>
-        <p>Learn more about our innovative technology and the team behind it.</p>
-        <div class="features">
-            <div class="feature-item">Feature 1</div>
-            <div class="feature-item">Feature 2</div>
-            <div class="feature-item">Feature 3</div>
-        </div>
-    </section>
-
-    <!-- Contact Section -->
-    <section id="contact">
-        <h3>Contact Us</h3>
-        <p>Get in touch with us for any inquiries or support.</p>
-        <p>Email: <a href="mailto:maindanikraft@gmail.com">maindanikraft@gmail.com</a></p>
-        <p>Discord: Brawlegal</p>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 Advanced VR Video Site. All rights reserved. <a href="#contact">Contact</a></p>
-    </footer>
-
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelectorAll('section').forEach(section => {
-                    section.classList.remove('active');
-                });
-                document.querySelector(this.getAttribute('href')).classList.add('active');
-            });
-        });
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         var player1, player2;
         var isFullscreen = false;
@@ -200,7 +168,7 @@
 
         function onPlayerReady(event) {
             if (player1 && player2) {
-                document.getElementById('playButton').disabled = false;
+                document.querySelector('.button').disabled = false;
             }
         }
 
@@ -209,7 +177,7 @@
                 var videoId;
                 if (url.includes('youtu.be')) {
                     videoId = url.split('youtu.be/')[1];
-                } else if (url.includes('youtube.com')) {
+                } else {
                     videoId = new URL(url).searchParams.get('v');
                 }
                 if (videoId) {
@@ -246,22 +214,13 @@
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > 0.09) {
+                    if (diff > 0.1) {
                         var targetTime = Math.min(time1, time2);
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
                     }
                 }
-            }, 500); // Check every 0.5 seconds
-        }
-
-        function playExampleVideo() {
-            var exampleVideoUrl = 'https://www.youtube.com/watch?v=aG01KIXWrbU';
-            loadVideo(exampleVideoUrl);
-            player1.playVideo();
-            player2.playVideo();
-            player2.mute(); // Mute the second video
-            startSyncCheck();
+            }, 500); // Check every half second
         }
 
         function toggleControls() {
@@ -294,10 +253,27 @@
             }
         }
 
-        document.getElementById('playButton').addEventListener('click', playBothVideos);
+        function playExampleVideo() {
+            var exampleUrl = 'https://www.youtube.com/watch?v=aG01KIXWrbU';
+            document.getElementById('urlInput').value = exampleUrl;
+            playBothVideos();
+        }
+
         document.querySelector('.example-button').addEventListener('click', playExampleVideo);
         document.querySelector('.hide-buttons').addEventListener('click', toggleControls);
-        document.querySelector('.fullscreen-button').addEventListener('click', toggleFullscreen);
+                document.querySelector('.fullscreen-button').addEventListener('click', toggleFullscreen);
+        document.querySelector('#exitFullscreenButton').addEventListener('click', function() {
+            document.querySelector('.fullscreen-mode').style.display = 'none';
+            document.body.style.overflow = 'auto';
+            isFullscreen = false;
+        });
+
+        // Ensure YouTube API is ready
+        window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+
+        // Play both videos with given URL
+        document.querySelector('#playButton').addEventListener('click', playBothVideos);
     </script>
 </body>
 </html>
+

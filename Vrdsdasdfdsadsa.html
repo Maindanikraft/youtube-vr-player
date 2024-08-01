@@ -10,6 +10,7 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #121212;
             color: #e0e0e0;
+            overflow-x: hidden;
         }
         header {
             position: fixed;
@@ -23,6 +24,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 10px 20px;
+            transition: background-color 0.3s;
         }
         header h1 {
             margin: 0;
@@ -45,17 +47,20 @@
             font-size: 18px;
             padding: 8px 12px;
             border-radius: 5px;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
         }
         nav ul li a:hover {
             background-color: #333;
+            transform: scale(1.05);
         }
         section {
             padding: 80px 20px 20px 20px;
             display: none;
+            transition: opacity 0.5s ease-in-out;
         }
         section.active {
             display: block;
+            opacity: 1;
         }
         .hero {
             background-color: #333;
@@ -65,6 +70,7 @@
             background-image: url('https://via.placeholder.com/1500x500');
             background-size: cover;
             background-position: center;
+            transition: background-color 0.5s ease;
         }
         .hero h2 {
             font-size: 48px;
@@ -82,10 +88,11 @@
             border-radius: 5px;
             font-size: 18px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
         }
         .hero button:hover {
             background-color: #005fa3;
+            transform: scale(1.05);
         }
         .content {
             max-width: 1200px;
@@ -114,10 +121,11 @@
             border-radius: 10px;
             margin: 10px;
             flex-basis: 30%;
-            transition: transform 0.3s;
+            transition: transform 0.3s, background-color 0.3s;
         }
         .feature-item:hover {
             transform: scale(1.05);
+            background-color: #333;
         }
         .feature-item h4 {
             font-size: 24px;
@@ -127,9 +135,10 @@
             font-size: 16px;
         }
         .vr-section {
-            background-color: #222;
+            background-color: #000;
             padding: 40px 20px;
             text-align: center;
+            color: #e0e0e0;
         }
         .vr-section h3 {
             font-size: 32px;
@@ -142,6 +151,7 @@
             align-items: center;
             position: relative;
             margin-top: 20px;
+            gap: 20px;
         }
         .vr-player iframe {
             width: 45vw;
@@ -161,18 +171,23 @@
         .controls-container {
             margin-top: 20px;
             display: flex;
-            justify-content: center;
+            flex-direction: column;
             align-items: center;
+            gap: 10px;
         }
         .controls-container input {
             padding: 10px;
-            margin-right: 10px;
             border-radius: 5px;
             border: 1px solid #555;
-            background-color: #333;
+            background-color: #222;
             color: #fff;
             font-size: 16px;
             width: 250px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .controls-container input:focus {
+            background-color: #333;
+            border-color: #007acc;
         }
         .controls-container button {
             padding: 10px 20px;
@@ -182,10 +197,26 @@
             border-radius: 5px;
             font-size: 16px;
             cursor: pointer;
-            transition: background-color 0.3s;
+            transition: background-color 0.3s, transform 0.3s;
         }
         .controls-container button:hover {
             background-color: #005fa3;
+            transform: scale(1.05);
+        }
+        .example-button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #ff5722;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .example-button:hover {
+            background-color: #e64a19;
+            transform: scale(1.05);
         }
         footer {
             background-color: #1f1f1f;
@@ -193,14 +224,16 @@
             padding: 20px;
             text-align: center;
             margin-top: 40px;
+            transition: background-color 0.3s;
         }
         footer a {
             color: #007acc;
             text-decoration: none;
             margin-left: 5px;
+            transition: color 0.3s;
         }
         footer a:hover {
-            text-decoration: underline;
+            color: #005fa3;
         }
     </style>
 </head>
@@ -243,15 +276,15 @@
             <div class="feature-list">
                 <div class="feature-item">
                     <h4>High-Quality Streaming</h4>
-                    <p>Experience VR videos in stunning quality, with smooth streaming and minimal buffering.</p>
+                                        <p>Experience VR videos in stunning 4K resolution with ultra-low latency.</p>
                 </div>
                 <div class="feature-item">
-                    <h4>Easy Navigation</h4>
-                    <p>Our user-friendly interface makes it easy to find and enjoy your favorite VR content.</p>
+                    <h4>Synchronized Playback</h4>
+                    <p>Watch synchronized VR videos with perfect timing across multiple devices.</p>
                 </div>
                 <div class="feature-item">
-                    <h4>Cross-Platform Support</h4>
-                    <p>Enjoy our VR content on any device, whether you're using a headset, desktop, or mobile device.</p>
+                    <h4>Customizable Controls</h4>
+                    <p>Adjust video settings and controls to fit your VR environment perfectly.</p>
                 </div>
             </div>
         </div>
@@ -261,15 +294,16 @@
     <section id="vr" class="vr-section">
         <div class="content">
             <h3>VR Video Player</h3>
+            <p>Watch and synchronize two VR videos simultaneously with enhanced control options.</p>
             <div class="vr-player">
                 <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 <div class="vr-separator"></div>
                 <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
             <div class="controls-container">
-                <input type="text" id="urlInput" placeholder="Enter YouTube URL">
+                <input type="text" id="urlInput" placeholder="Enter YouTube URL" aria-label="YouTube URL" />
                 <button id="playButton">Play Videos</button>
-            
+                <button class="example-button" onclick="playExampleVideo()">Play Example Video</button>
             </div>
         </div>
     </section>
@@ -293,7 +327,7 @@
         </p>
     </footer>
 
-    <!-- JavaScript for Navigation and VR Player -->
+    <!-- JavaScript for Navigation, VR Player, and Animations -->
     <script>
         // Navigation handling
         document.querySelectorAll('.nav-link').forEach(link => {
@@ -368,6 +402,15 @@
             } else {
                 alert('Please enter a valid YouTube URL');
             }
+        }
+
+        function playExampleVideo() {
+            var exampleUrl = 'https://www.youtube.com/watch?v=aG01KIXWrbU';
+            loadVideo(exampleUrl);
+            player1.playVideo();
+            player2.playVideo();
+            player2.mute();
+            startSyncCheck();
         }
 
         function startSyncCheck() {

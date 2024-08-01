@@ -73,19 +73,26 @@
         .vr-section {
             background-color: #000; /* Pitch black background for VR section */
             color: #fff;
-            padding: 40px 10px;
+            padding: 20px 10px;
             text-align: center;
+            height: 100vh; /* Full height for mobile */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         .vr-player {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 3%; /* Reduced space between players */
+            gap: 5%; /* Reduced space between players */
             flex-direction: row;
+            width: 100%;
+            height: 80%; /* Adjusted to fit vertically */
         }
         .vr-player iframe {
-            width: 40%; /* Slightly smaller size */
-            height: 250px; /* Adjusted height */
+            width: 45%; /* Slightly smaller size for mobile */
+            height: 80%; /* Adjusted height for mobile */
             border: none;
             border-radius: 10px;
         }
@@ -189,15 +196,18 @@
                 font-size: 0.9rem;
             }
             .vr-section {
-                padding: 30px 5px;
+                padding: 20px 5px;
+                height: auto; /* Adjust height to fit content */
             }
             .vr-player {
                 flex-direction: column;
                 gap: 2%;
+                width: 100%;
+                height: 70vh; /* Adjusted for better fit */
             }
             .vr-player iframe {
                 width: 90%;
-                height: 200px;
+                height: 60%; /* Adjusted height for mobile */
             }
             .vr-separator {
                 display: none;
@@ -274,7 +284,7 @@
                 </div>
                 <div class="feature-item">
                     <h4>Customizable Controls</h4>
-                    <p>Personalize your viewing experience with adjustable controls.</p>
+                    <p>Adjust settings to fit your preferences.</p>
                 </div>
             </div>
         </div>
@@ -401,7 +411,7 @@
         }
 
         function playExampleVideo() {
-            var exampleVideoUrl = 'https://www.youtube.com/watch?v=AazhHUSacKM&list=PLTDgOUcX23hbq6BR226eSwhvBU86WJUph';
+            var exampleVideoUrl = 'https://www.youtube.com/watch?v=aG01KIXWrbU';
             loadVideo(exampleVideoUrl);
             player1.playVideo();
             player2.playVideo();

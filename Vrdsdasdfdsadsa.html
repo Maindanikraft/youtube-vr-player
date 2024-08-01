@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VR YouTube Video</title>
+    <title>VR YouTube Video Sync</title>
     <style>
         body {
             margin: 0;
@@ -15,24 +15,23 @@
             height: 100vh;
             background-color: #000;
             color: #fff;
-            position: relative;
             font-family: Arial, sans-serif;
         }
         .video-container {
             display: flex;
-            flex-direction: column; /* Change to column on mobile */
+            justify-content: center;
+            align-items: center;
             width: 100%;
-            height: calc(100% - 100px); /* Adjust height to leave space for controls */
+            height: calc(100% - 60px); /* Adjust for controls height */
             position: relative;
         }
         .video-frame {
             position: relative;
             width: 50%;
-            padding-top: 28.5%; /* Aspect ratio for oval shape */
+            padding-top: 28.5%;
             border-radius: 50%;
             mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
             -webkit-mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
-            overflow: hidden;
         }
         .video-frame iframe {
             position: absolute;
@@ -42,65 +41,54 @@
             height: 100%;
             border: none;
         }
-        .play-button, .url-input {
-            margin: 10px;
-            padding: 15px 20px;
-            background-color: #333;
-            color: #fff;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s;
-            width: 100%; /* Full width on mobile */
-            max-width: 300px;
-            box-sizing: border-box;
-        }
-        .play-button:hover, .url-input:focus {
-            background-color: #555;
-        }
-        .url-input {
-            margin-bottom: 20px;
-            border: 1px solid #555;
-            border-radius: 5px;
-            padding: 5px;
-            color: #fff;
-            background-color: #222;
-        }
         .controls-container {
             position: absolute;
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 10;
             text-align: center;
-            width: 100%;
-            max-width: 300px;
-            padding: 10px;
+            z-index: 10;
+            display: flex;
+            justify-content: center;
+            gap: 10px;
         }
-        .hide-controls-button, .fullscreen-button {
-            position: absolute;
-            top: 10px;
-            width: 50px;
-            height: 50px;
-            background-color: rgba(255, 255, 255, 0.1);
+        .play-button, .url-input, .hide-controls-button, .fullscreen-button {
+            padding: 10px 15px;
+            background-color: #333;
             color: #fff;
             border: none;
-            border-radius: 25px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 24px;
-            text-align: center;
-            line-height: 50px;
-            transition: background-color 0.3s;
+            font-size: 14px;
+            transition: background-color 0.3s, transform 0.3s;
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            display: inline-block;
         }
-        .hide-controls-button:hover, .fullscreen-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+        .play-button:hover, .url-input:focus, .hide-controls-button:hover, .fullscreen-button:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+        .url-input {
+            padding: 8px;
+            border: 1px solid #555;
+            background-color: #222;
+            width: 200px;
+        }
+        .hide-controls-button, .fullscreen-button {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            line-height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
         }
         .hide-controls-button {
-            right: 80px;
+            margin-right: 10px;
         }
         .fullscreen-button {
-            right: 20px;
+            margin-left: 10px;
         }
         .hidden {
             display: none;
@@ -109,11 +97,6 @@
         .fullscreen .video-container {
             height: 100vh;
             width: 100vw;
-            top: 0;
-            left: 0;
-            position: fixed;
-            z-index: 9;
-            flex-direction: row; /* Keep videos side by side in fullscreen */
         }
         .fullscreen .video-frame {
             width: 50%;
@@ -122,25 +105,28 @@
         .fullscreen .controls-container {
             display: none;
         }
-
         /* Mobile-Specific Styles */
         @media (max-width: 768px) {
             .video-container {
-                height: calc(100% - 120px);
+                height: calc(100% - 60px); /* Account for controls height */
             }
             .video-frame {
                 width: 48%;
                 padding-top: 48%;
             }
+            .controls-container {
+                position: static;
+                transform: none;
+                gap: 5px;
+            }
             .play-button, .url-input {
-                font-size: 16px;
-                padding: 10px;
+                width: 80%;
             }
             .hide-controls-button, .fullscreen-button {
-                width: 40px;
-                height: 40px;
-                font-size: 18px;
-                line-height: 40px;
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+                line-height: 35px;
             }
         }
     </style>
@@ -170,6 +156,8 @@
         var player1, player2;
         var isFullscreen = false;
         var syncInterval;
+        var syncIntervalTime = 1000; // Check sync every 1 second
+        var syncThreshold = 0.005; // Synchronization threshold in seconds
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -216,31 +204,28 @@
                 loadVideo(url);
                 player1.playVideo();
                 player2.playVideo();
-                player2.mute(); // Mute the second video
+                player1.unMute(); // Unmute the first video
+                player2.unMute(); // Unmute the second video
 
                 // Start synchronization check
-                startSyncCheck();
+                syncInterval = setInterval(syncVideos, syncIntervalTime);
             } else {
                 alert('Please enter a valid YouTube URL');
             }
         }
 
-        function startSyncCheck() {
-            if (syncInterval) clearInterval(syncInterval); // Clear previous interval if any
+        function syncVideos() {
+            if (player1 && player2) {
+                var time1 = player1.getCurrentTime();
+                var time2 = player2.getCurrentTime();
+                var diff = Math.abs(time1 - time2);
 
-            syncInterval = setInterval(function() {
-                if (player1 && player2) {
-                    var time1 = player1.getCurrentTime();
-                    var time2 = player2.getCurrentTime();
-                    var diff = Math.abs(time1 - time2);
-
-                    if (diff > 0.1) { // If difference is more than 0.1 seconds
-                        var targetTime = Math.min(time1, time2); // Seek to the earlier time
-                        player1.seekTo(targetTime, true);
-                        player2.seekTo(targetTime, true);
-                    }
+                if (diff > syncThreshold) { // If difference exceeds the sync threshold
+                    var targetTime = Math.min(time1, time2); // Seek to the earlier time
+                    player1.seekTo(targetTime, true);
+                    player2.seekTo(targetTime, true);
                 }
-            }, 1000); // Check every second
+            }
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);

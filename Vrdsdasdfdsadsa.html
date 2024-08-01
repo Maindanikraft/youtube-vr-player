@@ -23,18 +23,18 @@
             align-items: center;
             width: 100%;
             height: 100%;
-            flex-wrap: wrap;
             position: relative;
+            flex-direction: row;
+            overflow: hidden;
         }
         .video-frame {
             position: relative;
-            width: 90%;
-            padding-top: 90%;
-            overflow: hidden;
+            width: 45%;
+            padding-top: 45%;
+            margin: 0 10px;
             border-radius: 50%;
             mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
             -webkit-mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
-            margin-bottom: 2%;
         }
         .video-frame iframe {
             position: absolute;
@@ -44,64 +44,53 @@
             height: 100%;
             border: none;
         }
-        .play-button, .url-input {
+        .controls-container {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 10;
+        }
+        .play-button, .url-input, .hide-controls-button, .fullscreen-button {
             margin: 10px;
-            padding: 15px 20px;
+            padding: 15px 25px;
             background-color: #333;
             color: #fff;
             border: none;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            font-size: 18px;
-            transition: background-color 0.3s;
-            width: 100%;
-            max-width: 300px;
+            font-size: 16px;
+            transition: background-color 0.3s, transform 0.3s;
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            display: inline-block;
         }
-        .play-button:hover, .url-input:focus {
+        .play-button:hover, .url-input:focus, .hide-controls-button:hover, .fullscreen-button:hover {
             background-color: #555;
+            transform: translateY(-2px);
         }
         .url-input {
-            margin-bottom: 20px;
+            padding: 10px;
             border: 1px solid #555;
-            border-radius: 5px;
-            padding: 5px;
-            color: #fff;
             background-color: #222;
-        }
-        .controls-container {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            text-align: center;
-            width: 100%;
-            max-width: 300px;
+            width: 300px;
         }
         .hide-controls-button, .fullscreen-button {
-            position: absolute;
-            top: 10px;
-            z-index: 20;
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            line-height: 50px;
+            border-radius: 50%;
             background-color: rgba(255, 255, 255, 0.1);
             color: #fff;
-            border: none;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 18px;
-            text-align: center;
-            line-height: 40px;
-            transition: background-color 0.3s;
-        }
-        .hide-controls-button:hover, .fullscreen-button:hover {
-            background-color: rgba(255, 255, 255, 0.3);
+            position: relative;
         }
         .hide-controls-button {
-            right: 70px;
+            left: -60px;
         }
         .fullscreen-button {
-            right: 20px;
+            left: 10px;
         }
         .hidden {
             display: none;
@@ -110,28 +99,38 @@
         .fullscreen .video-container {
             height: 100vh;
             width: 100vw;
-            flex-direction: row;
-            justify-content: center;
         }
         .fullscreen .video-frame {
-            width: 45%;
-            padding-top: 45%;
+            width: 48%;
+            padding-top: 48%;
         }
         .fullscreen .controls-container {
             display: none;
         }
-
         /* Mobile-Specific Styles */
         @media (max-width: 768px) {
             .video-container {
                 flex-direction: column;
-                justify-content: center;
                 height: 100%;
+                justify-content: center;
             }
             .video-frame {
                 width: 90%;
                 padding-top: 90%;
-                margin-bottom: 0;
+                margin: 10px 0;
+            }
+            .controls-container {
+                position: static;
+                transform: none;
+            }
+            .play-button, .url-input {
+                width: 80%;
+            }
+            .hide-controls-button, .fullscreen-button {
+                width: 45px;
+                height: 45px;
+                font-size: 18px;
+                line-height: 45px;
             }
         }
     </style>
@@ -153,6 +152,7 @@
     </div>
 
     <script>
+        // Load YouTube IFrame API
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -160,7 +160,7 @@
 
         var player1, player2;
         var isFullscreen = false;
-        var syncIntervalTime = 800; // Adjust this value for optimal sync check interval
+        var syncWorker;
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -210,31 +210,16 @@
                 player1.unMute(); // Unmute the first video
                 player2.unMute(); // Unmute the second video
 
-                // Start synchronization check
-                startSyncCheck();
+                // Initialize sync worker
+                if (syncWorker) syncWorker.terminate();
+                syncWorker = new Worker('sync-worker.js');
+                syncWorker.postMessage({ action: 'start', player1: player1, player2: player2 });
             } else {
                 alert('Please enter a valid YouTube URL');
             }
         }
 
-        function startSyncCheck() {
-            if (syncInterval) clearInterval(syncInterval); // Clear previous interval if any
-
-            syncInterval = setInterval(function() {
-                if (player1 && player2) {
-                    var time1 = player1.getCurrentTime();
-                    var time2 = player2.getCurrentTime();
-                    var diff = Math.abs(time1 - time2);
-
-                    if (diff > 0.01) { // If difference is more than 0.01 seconds
-                        var targetTime = Math.min(time1, time2); // Seek to the earlier time
-                        player1.seekTo(targetTime, true);
-                        player2.seekTo(targetTime, true);
-                    }
-                }
-            }, syncIntervalTime); // Check sync at defined interval
-        }
-
+        // Event listeners for buttons
         document.getElementById('playButton').addEventListener('click', playBothVideos);
 
         document.getElementById('hideControlsButton').addEventListener('click', function() {
@@ -252,6 +237,35 @@
                 isFullscreen = false;
             }
         });
+    </script>
+    <!-- Web Worker Script -->
+    <script id="sync-worker-script" type="javascript/worker">
+        self.onmessage = function(e) {
+            var player1 = e.data.player1;
+            var player2 = e.data.player2;
+            var syncIntervalTime = 100; // High-resolution interval
+
+            function sync() {
+                var time1 = player1.getCurrentTime();
+                var time2 = player2.getCurrentTime();
+                var diff = Math.abs(time1 - time2);
+
+                if (diff > 0.01) { // If difference is more than 0.01 seconds
+                    var targetTime = Math.min(time1, time2); // Seek to the earlier time
+                    player1.seekTo(targetTime, true);
+                    player2.seekTo(targetTime, true);
+                }
+            }
+
+            var syncInterval = setInterval(sync, syncIntervalTime);
+
+            self.onmessage = function(e) {
+                if (e.data.action === 'stop') {
+                    clearInterval(syncInterval);
+                    self.close();
+                }
+            };
+        }
     </script>
 </body>
 </html>

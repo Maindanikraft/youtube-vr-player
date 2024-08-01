@@ -21,15 +21,37 @@
         }
         .video-player {
             position: relative;
-            width: 50vw;
-            height: 50vh;
+            width: 45vw;
+            height: 45vh;
             background-color: #333;
             margin: 0 10px;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
         }
         iframe {
             width: 100%;
             height: 100%;
+        }
+        .input-container {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            display: flex;
+            align-items: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 5px;
+            padding: 5px;
+        }
+        .input-container input {
+            width: 150px;
+            height: 25px;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            margin-right: 5px;
         }
         .controls {
             position: absolute;
@@ -51,12 +73,16 @@
 <body>
     <div class="container">
         <div class="video-player" id="player1">
-            <input type="text" id="url1" placeholder="Enter YouTube URL">
-            <button onclick="loadVideo('player1', 'url1')">Load Video 1</button>
+            <div class="input-container">
+                <input type="text" id="url1" placeholder="Enter YouTube URL">
+                <button onclick="loadVideo('player1', 'url1')">Load Video 1</button>
+            </div>
         </div>
         <div class="video-player" id="player2">
-            <input type="text" id="url2" placeholder="Enter YouTube URL">
-            <button onclick="loadVideo('player2', 'url2')">Load Video 2</button>
+            <div class="input-container">
+                <input type="text" id="url2" placeholder="Enter YouTube URL">
+                <button onclick="loadVideo('player2', 'url2')">Load Video 2</button>
+            </div>
         </div>
     </div>
     <div class="controls">

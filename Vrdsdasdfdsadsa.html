@@ -36,6 +36,7 @@
             mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
             -webkit-mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
             margin-bottom: 2%;
+            transition: all 0.3s ease;
         }
         .video-frame iframe {
             position: absolute;
@@ -134,35 +135,6 @@
                 margin-bottom: 0;
             }
         }
-        /* Volume Bar Styles */
-        #volumeContainer {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            z-index: 20; /* Ensure it is above other elements */
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #volumeBar {
-            width: 10px;
-            height: 200px;
-            background-color: #333;
-            border-radius: 5px;
-            position: relative;
-            cursor: pointer;
-        }
-        #volumeHandle {
-            width: 20px;
-            height: 20px;
-            background-color: #f00;
-            border-radius: 50%;
-            position: absolute;
-            left: -5px;
-            top: 0;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body>
@@ -180,13 +152,8 @@
             <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
-    <div id="volumeContainer">
-        <div id="volumeBar">
-            <div id="volumeHandle"></div>
-        </div>
-    </div>
 
-    <script>
+    <script defer>
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -195,7 +162,6 @@
         var player1, player2;
         var isFullscreen = false;
         var syncInterval;
-        var volume = 0.5; // Default volume level
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -242,7 +208,8 @@
                 loadVideo(url);
                 player1.playVideo();
                 player2.playVideo();
-                player2.mute(); // Mute the second video
+                player1.unMute(); // Unmute the first video
+                player2.mute();  // Mute the second video
 
                 // Start synchronization check
                 startSyncCheck();
@@ -269,28 +236,23 @@
             }, 1000); // Check every second
         }
 
-        function setVolume(level) {
-            volume = level;
-            player1.setVolume(level * 100);
-            player2.setVolume(level * 100);
-        }
-
-        function updateVolume(event) {
-            const rect = document.getElementById('volumeBar').getBoundingClientRect();
-            const y = event.clientY - rect.top;
-            const height = rect.height;
-            const volumeLevel = Math.max(0, Math.min(1, (height - y) / height));
-            setVolume(volumeLevel);
-            document.getElementById('volumeHandle').style.top = `${(1 - volumeLevel) * 100}%`;
-        }
-
         document.getElementById('playButton').addEventListener('click', playBothVideos);
 
         document.getElementById('hideControlsButton').addEventListener('click', function() {
             var controlsContainer = document.getElementById('controlsContainer');
-            var volumeContainer = document.getElementById('volumeContainer');
             controlsContainer.classList.toggle('hidden');
-            volumeContainer.classList.toggle('hidden');
         });
 
         document.getElementById('fullscreenButton').addEventListener('click', function() {
+            var body = document.body;
+            if (!isFullscreen) {
+                body.classList.add('fullscreen');
+                isFullscreen = true;
+            } else {
+                body.classList.remove('fullscreen');
+                isFullscreen = false;
+            }
+        });
+    </script>
+</body>
+</html>

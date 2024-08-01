@@ -70,6 +70,12 @@
             height: 100%;
             border: none;
         }
+        .vr-player-section iframe {
+            border-radius: 0; /* Rectangular players */
+        }
+        .fullscreen-mode iframe {
+            border-radius: 0;
+        }
         .controls-container {
             position: absolute;
             bottom: 10px;
@@ -117,10 +123,6 @@
             bottom: 0;
             width: 100%;
             text-align: center;
-        }
-        /* Hide class */
-        .hidden {
-            display: none;
         }
         /* Media Queries for Responsive Design */
         @media (max-width: 768px) {
@@ -254,6 +256,7 @@
             }
         }
 
+       
         function playBothVideos() {
             var url = document.getElementById('urlInput').value;
             if (url && player1 && player2) {
@@ -290,7 +293,7 @@
         document.getElementById('playButton').addEventListener('click', playBothVideos);
 
         document.getElementById('hideControlsButton').addEventListener('click', function() {
-            var controlsContainer = document.querySelector('.controls-container');
+            var controlsContainer = document.getElementById('controlsContainer');
             controlsContainer.classList.toggle('hidden');
         });
 
@@ -317,7 +320,29 @@
             player2.playVideo();
             player2.mute(); // Mute the second video
         });
+
+        // Fix for background color issue
+        document.querySelectorAll('.vr-player-section, .fullscreen-mode').forEach(el => {
+            el.style.backgroundColor = '#000'; // Ensure the background is pitch black
+        });
+
+        // Improved sync handling
+        function handleVideoSync() {
+            if (player1 && player2) {
+                let currentTime1 = player1.getCurrentTime();
+                let currentTime2 = player2.getCurrentTime();
+                let difference = Math.abs(currentTime1 - currentTime2);
+
+                if (difference > 0.09) {
+                    let targetTime = Math.min(currentTime1, currentTime2);
+                    player1.seekTo(targetTime, true);
+                    player2.seekTo(targetTime, true);
+                }
+            }
+        }
+
+        setInterval(handleVideoSync, 1000); // Sync check every second
+
     </script>
 </body>
 </html>
-

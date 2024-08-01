@@ -164,9 +164,10 @@
         firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
         var player1, player2;
+        var syncInterval;
         var isFullscreen = false;
         var syncIntervalTime = 500; // Check sync every 0.5 seconds
-        var syncThreshold = 0.005; // Synchronization threshold in seconds
+        var syncThreshold = 0.1; // Synchronization threshold in seconds (100 milliseconds)
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {

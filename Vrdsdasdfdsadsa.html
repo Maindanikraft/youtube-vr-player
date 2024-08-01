@@ -125,8 +125,8 @@
             margin-bottom: 20px;
         }
         .vr-player iframe {
-            width: 40%; /* Slightly smaller size */
-            height: 240px; /* Adjusted height */
+            width: 45%; /* Slightly smaller size */
+            height: 250px; /* Adjusted height */
             border: none;
             border-radius: 10px; /* Rounded corners */
         }
@@ -271,17 +271,17 @@
                 <button id="playButton">Play Videos</button>
                 <button class="example-button" onclick="playExampleVideo()">Play Example Video</button>
                 <button class="hide-buttons" onclick="toggleControls()">Hide Buttons</button>
+                <button class="fullscreen-button" onclick="toggleFullscreen()">Fullscreen</button>
             </div>
             <div class="vr-player">
                 <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 <div class="vr-separator"></div>
                 <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
-            <button class="fullscreen-button" onclick="toggleFullscreen()">Fullscreen</button>
-        </div>
-        <div id="fullscreenMode" class="fullscreen-mode">
-            <iframe id="fullscreenVideo1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <iframe id="fullscreenVideo2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <div id="fullscreenMode" class="fullscreen-mode">
+                <iframe id="fullscreenVideo1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe id="fullscreenVideo2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
         </div>
     </section>
 
@@ -351,7 +351,7 @@
                 var videoId;
                 if (url.includes('youtu.be')) {
                     videoId = url.split('youtu.be/')[1];
-                } else {
+                } else if (url.includes('youtube.com')) {
                     videoId = new URL(url).searchParams.get('v');
                 }
                 if (videoId) {
@@ -433,7 +433,6 @@
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
-
         document.querySelector('.example-button').addEventListener('click', playExampleVideo);
 
         // Smooth Scroll for Navigation

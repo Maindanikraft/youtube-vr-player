@@ -69,9 +69,6 @@
             width: calc(100% - 40px);
             max-width: 400px;
         }
-        .example-button {
-            margin-top: 10px;
-        }
         .fullscreen-mode {
             display: none;
             position: fixed;
@@ -129,7 +126,7 @@
         <div class="controls-container">
             <button class="button hide-buttons" id="hideControlsButton">Hide Buttons</button>
             <button class="button fullscreen-button" id="fullscreenButton">⛶</button>
-            <button class="button example-button" id="exampleButton">Play Example Video</button>
+            <button class="button" id="playButton">Play Videos</button>
             <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" aria-label="YouTube URL" />
         </div>
         <div class="fullscreen-mode" id="fullscreenMode">
@@ -253,15 +250,9 @@
             }
         }
 
-        function playExampleVideo() {
-            var exampleUrl = 'https://www.youtube.com/watch?v=aG01KIXWrbU';
-            document.getElementById('urlInput').value = exampleUrl;
-            playBothVideos();
-        }
-
-        document.querySelector('.example-button').addEventListener('click', playExampleVideo);
-        document.querySelector('.hide-buttons').addEventListener('click', toggleControls);
-                document.querySelector('.fullscreen-button').addEventListener('click', toggleFullscreen);
+        document.querySelector('#playButton').addEventListener('click', playBothVideos);
+        document.querySelector('#hideControlsButton').addEventListener('click', toggleControls);
+        document.querySelector('#fullscreenButton').addEventListener('click', toggleFullscreen);
         document.querySelector('#exitFullscreenButton').addEventListener('click', function() {
             document.querySelector('.fullscreen-mode').style.display = 'none';
             document.body.style.overflow = 'auto';
@@ -269,7 +260,7 @@
         });
 
         // Ensure YouTube API is ready
-        window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+                window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 
         // Play both videos with given URL
         document.querySelector('#playButton').addEventListener('click', playBothVideos);

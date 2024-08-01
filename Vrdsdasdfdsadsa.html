@@ -5,302 +5,176 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced VR Video Site</title>
     <style>
-        /* Global Styles */
-        body {
+        /* Reset and global styles */
+        * {
             margin: 0;
-            overflow: hidden;
-            font-family: Arial, sans-serif;
-            background-color: #000; /* Updated to black */
-            color: #fff;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
+            padding: 0;
+            box-sizing: border-box;
         }
-        header {
-            background-color: #222;
-            color: #fff;
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000; /* Black background for the whole site */
+            color: #fff; /* White text color for contrast */
+            overflow-x: hidden;
+        }
+        header, footer {
+            background-color: #111; /* Slightly lighter black for header and footer */
             padding: 10px;
             text-align: center;
-            position: fixed;
-            width: 100%;
-            top: 0;
-            left: 0;
-            z-index: 10;
         }
-        header h1 {
-            margin: 0;
-            font-size: 1.2rem;
-        }
-        nav {
-            margin: 5px 0;
-        }
-        nav ul {
-            list-style-type: none;
-            padding: 0;
-            text-align: center;
-        }
-        nav ul li {
-            display: inline;
-            margin: 0 5px;
-        }
-        nav ul li a {
+        header a, footer a {
             color: #fff;
             text-decoration: none;
-            font-size: 0.9rem;
+            margin: 0 10px;
+            transition: color 0.3s;
         }
-        nav ul li a:hover {
-            text-decoration: underline;
+        header a:hover, footer a:hover {
+            color: #aaa; /* Light gray for hover effect */
+        }
+        .nav {
+            margin: 0;
+        }
+        .nav-link {
+            display: inline-block;
+            margin: 0 10px;
+            padding: 10px 20px;
+            background-color: #222; /* Darker background for nav links */
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+        .nav-link:hover {
+            background-color: #444; /* Slightly lighter on hover */
         }
         section {
+            padding: 20px;
+            background-color: #000; /* Black background for sections */
+            border-top: 1px solid #333;
+        }
+        .vr-player-section, .fullscreen-mode {
             display: none;
-            padding: 30px 10px 10px;
-            text-align: center;
-        }
-        section.active {
-            display: block;
-        }
-        .hero-section {
-            background-color: #222;
-            color: #fff;
-            padding: 40px 10px 30px;
-        }
-        .hero-section h2 {
-            font-size: 1.5rem;
-        }
-        .hero-section p {
-            font-size: 0.9rem;
-        }
-        .vr-section {
-            background-color: #000; /* Pitch black background for VR section */
-            color: #fff;
-            padding: 30px 10px;
-            text-align: center;
-            position: relative; /* Position relative for absolute children */
-            overflow: hidden; /* Ensure no white background behind players */
-        }
-        .vr-section .controls-container {
-            margin-bottom: 10px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-            position: relative;
-            z-index: 15;
-        }
-        .vr-section .controls-container input,
-        .vr-section .controls-container button {
-            margin: 3px;
-            padding: 3px 8px;
-            font-size: 0.8rem;
-            border-radius: 5px;
-            border: none;
-        }
-        .vr-section .controls-container input {
-            width: 80%;
-            max-width: 200px;
-            background-color: #222;
-            color: #fff;
-        }
-        .vr-section .controls-container button {
-            background-color: #333;
-            color: #fff;
-            cursor: pointer;
-        }
-        .vr-section .controls-container button:hover {
-            background-color: #555;
-        }
-        .vr-section .controls-container .example-button {
-            background-color: #007bff;
-            color: #fff;
-        }
-        .vr-section .controls-container .example-button:hover {
-            background-color: #0056b3;
-        }
-        .vr-section .controls-container .hide-buttons {
-            background-color: #444;
-            color: #fff;
-        }
-        .vr-section .controls-container .hide-buttons:hover {
-            background-color: #666;
-        }
-        .fullscreen-button {
-            background-color: #444;
-            color: #fff;
-        }
-        .fullscreen-button:hover {
-            background-color: #666;
-        }
-        .vr-player {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 1%;
             flex-direction: row;
-            margin-bottom: 20px;
-        }
-        .vr-player iframe {
-            width: 45%; /* Adjusted size */
-            height: 250px; /* Adjusted height */
-            border: none;
-            background-color: #000; /* Ensure pitch black behind video */
-        }
-        .vr-separator {
-            width: 3px;
-            height: 100%;
-            background-color: #555;
-        }
-        .fullscreen-mode {
-            display: none;
+            justify-content: center;
+            align-items: center;
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #000;
+            background-color: #000; /* Pitch black background */
+            z-index: 9999;
+        }
+        .vr-player-section iframe, .fullscreen-mode iframe {
+            width: 45%;
+            height: 100%;
+            border: none;
+        }
+        .controls-container {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
             justify-content: center;
-            align-items: center;
-            z-index: 20;
+            gap: 10px;
         }
-        .fullscreen-mode iframe {
-            width: 70vw; /* Responsive width */
-            height: 70vh; /* Responsive height */
-            background-color: #000; /* Ensure pitch black behind video */
+        .controls-container button, .controls-container input {
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        .about {
-            background-color: #111; /* Darker background for contrast */
-            padding: 30px 10px;
+        .controls-container button:hover, .controls-container input:focus {
+            background-color: #555;
+        }
+        .hide-buttons {
+            margin-right: 10px;
+        }
+        .fullscreen-button {
+            margin-left: 10px;
+        }
+        .about, #contact {
             text-align: center;
-        }
-        .about h3 {
-            margin-top: 0;
         }
         .features {
             display: flex;
             justify-content: center;
-            gap: 5px;
-            flex-wrap: wrap;
-            margin: 0 auto;
+            gap: 20px;
         }
         .feature-item {
             background-color: #222;
-            border-radius: 10px;
-            padding: 8px;
-            width: 130px;
-            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-        .feature-item:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+            border-radius: 5px;
+            width: 150px;
         }
         footer {
-            background-color: #222;
-            color: #fff;
-            padding: 10px;
+            position: absolute;
+            bottom: 0;
+            width: 100%;
             text-align: center;
         }
-        footer a {
-            color: #007bff;
-            text-decoration: none;
+        /* Hide class */
+        .hidden {
+            display: none;
         }
-        footer a:hover {
-            text-decoration: underline;
-        }
-        /* Responsive Styles */
+        /* Media Queries for Responsive Design */
         @media (max-width: 768px) {
-            header {
-                padding: 8px 5px;
-            }
-            header h1 {
-                font-size: 1rem;
-            }
-            .hero-section {
-                padding: 30px 5px 20px;
-            }
-            .hero-section h2 {
-                font-size: 1.2rem;
-            }
-            .hero-section p {
-                font-size: 0.8rem;
-            }
-            .vr-section {
-                padding: 20px 5px;
-            }
-            .vr-player {
-                flex-direction: column;
-                gap: 1%;
-            }
-            .vr-player iframe {
-                width: 90%;
-                height: 200px;
-            }
-            .vr-separator {
-                display: none;
+            .vr-player-section iframe, .fullscreen-mode iframe {
+                width: 100%;
+                height: 50%;
             }
             .controls-container {
-                margin-top: 5px;
+                flex-direction: column;
             }
-            .controls-container input,
-            .controls-container button {
-                font-size: 0.7rem;
-                padding: 3px 6px;
-            }
-            .about {
-                padding: 20px 5px;
-            }
-            .feature-item {
-                width: 100px;
+            .controls-container button, .controls-container input {
+                width: 100%;
+                margin: 5px 0;
             }
         }
     </style>
 </head>
 <body>
     <header>
-        <h1>Advanced VR Video Site</h1>
         <nav>
-            <ul>
-                <li><a href="#home" class="nav-link">Home</a></li>
-                <li><a href="#vr" class="nav-link">VR Player</a></li>
-                <li><a href="#about" class="nav-link">About</a></li>
-                <li><a href="#contact" class="nav-link">Contact</a></li>
-            </ul>
+            <a href="#home" class="nav-link">Home</a>
+            <a href="#vr-player" class="nav-link">VR Player</a>
+            <a href="#about" class="nav-link">About</a>
+            <a href="#contact" class="nav-link">Contact</a>
         </nav>
     </header>
 
     <!-- Home Section -->
-    <section id="home" class="hero-section active">
-        <div class="content">
-            <h2>Welcome to the Advanced VR Video Site</h2>
-            <p>Discover the future of video entertainment with our state-of-the-art VR player technology.</p>
-        </div>
+    <section id="home">
+        <h1>Welcome to the Advanced VR Video Site</h1>
+        <p>Explore high-quality VR video playback with synchronized controls.</p>
     </section>
 
     <!-- VR Player Section -->
-    <section id="vr" class="vr-section">
-        <div class="content">
-            <h3>VR Video Player</h3>
-            <!-- Removed text here -->
+    <section id="vr-player">
+        <div class="vr-player-section">
+            <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             <div class="controls-container">
-                <input type="text" id="urlInput" placeholder="Enter YouTube URL" aria-label="YouTube URL" />
+                <input type="text" id="urlInput" placeholder="Enter YouTube URL" aria-label="YouTube URL">
                 <button id="playButton">Play Videos</button>
-                <button class="example-button" onclick="playExampleVideo()">Play Example Video</button>
-                <button class="hide-buttons" onclick="toggleControls()">Hide Buttons</button>
-                <button class="fullscreen-button" onclick="toggleFullscreen()">Fullscreen</button>
+                <button class="hide-buttons" id="hideControlsButton">Hide Buttons</button>
+                <button class="fullscreen-button" id="fullscreenButton">Fullscreen</button>
+                <button class="example-button">Example Video</button>
             </div>
-            <div class="vr-player">
-                <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                <div class="vr-separator"></div>
-                <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            </div>
-            <div id="fullscreenMode" class="fullscreen-mode">
-                <iframe id="fullscreenVideo1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                <iframe id="fullscreenVideo2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            </div>
+        </div>
+        <div id="fullscreenMode" class="fullscreen-mode">
+            <iframe id="fullscreenVideo1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            <iframe id="fullscreenVideo2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </section>
 
     <!-- About Section -->
-    <section id="about" class="about">
+    <section id="about">
         <h3>About Us</h3>
         <p>Learn more about our innovative technology and the team behind it.</p>
         <div class="features">
@@ -314,8 +188,8 @@
     <section id="contact">
         <div class="content">
             <h3>Contact Us</h3>
-            <p>Get in touch with us for any inquiries or support.</p>
-            <p>Email: <a href="mailto:support@vrsite.com">support@vrsite.com</a></p>
+            <p>Email: <a href="mailto:maindanikraft@gmail.com">maindanikraft@gmail.com</a></p>
+            <p>Discord: <a href="https://discord.com/users/Brawlegal">Brawlegal</a></p>
         </div>
     </section>
 
@@ -330,9 +204,9 @@
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 document.querySelectorAll('section').forEach(section => {
-                    section.classList.remove('active');
+                    section.style.display = 'none';
                 });
-                document.querySelector(this.getAttribute('href')).classList.add('active');
+                document.querySelector(this.getAttribute('href')).style.display = 'block';
             });
         });
 
@@ -410,70 +284,40 @@
                         player2.seekTo(targetTime, true);
                     }
                 }
-            }, 100); // Check every 100ms
-        }
-
-        function playExampleVideo() {
-            var exampleVideoUrl = 'https://www.youtube.com/watch?v=aG01KIXWrbU';
-            loadVideo(exampleVideoUrl);
-            player1.playVideo();
-            player2.playVideo();
-            player2.mute(); // Mute the second video
-        }
-
-        function toggleControls() {
-            var controls = document.querySelector('.controls-container');
-            var hideButton = document.querySelector('.hide-buttons');
-            if (controls.style.display === 'none') {
-                controls.style.display = 'flex';
-                hideButton.textContent = 'Hide Buttons';
-            } else {
-                controls.style.display = 'none';
-                hideButton.textContent = 'Show Buttons';
-            }
-        }
-
-        function toggleFullscreen() {
-            var fullscreenMode = document.getElementById('fullscreenMode');
-            if (!isFullscreen) {
-                fullscreenMode.style.display = 'flex';
-                document.getElementById('fullscreenVideo1').src = document.getElementById('video1').src;
-                document.getElementById('fullscreenVideo2').src = document.getElementById('video2').src;
-                isFullscreen = true;
-            } else {
-                fullscreenMode.style.display = 'none';
-                isFullscreen = false;
-            }
+            }, 1000); // Check every second
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
-        document.querySelector('.example-button').addEventListener('click', playExampleVideo);
-        document.querySelector('.hide-buttons').addEventListener('click', toggleControls);
-        document.querySelector('.fullscreen-button').addEventListener('click', toggleFullscreen);
 
-        // Smooth Scroll for Navigation
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function(e) {
-                e.preventDefault();
-                document.querySelector(this.getAttribute('href')).scrollIntoView({
-                    behavior: 'smooth'
-                });
-            });
+        document.getElementById('hideControlsButton').addEventListener('click', function() {
+            var controlsContainer = document.querySelector('.controls-container');
+            controlsContainer.classList.toggle('hidden');
         });
 
-        // Animations
-        document.querySelectorAll('section').forEach(section => {
-            section.addEventListener('mouseenter', function() {
-                this.style.transition = 'background-color 0.5s ease-in-out';
-                this.style.backgroundColor = '#111'; // Slight change for hover effect
-            });
-            section.addEventListener('mouseleave', function() {
-                this.style.transition = 'background-color 0.5s ease-in-out';
-                this.style.backgroundColor = '#000'; // Black background for default state
-            });
+        document.getElementById('fullscreenButton').addEventListener('click', function() {
+            var vrSection = document.querySelector('.vr-player-section');
+            var fullscreenMode = document.getElementById('fullscreenMode');
+
+            if (!isFullscreen) {
+                vrSection.style.display = 'none';
+                fullscreenMode.style.display = 'flex';
+                isFullscreen = true;
+            } else {
+                vrSection.style.display = 'flex';
+                fullscreenMode.style.display = 'none';
+                isFullscreen = false;
+            }
         });
 
-        window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
+        document.querySelector('.example-button').addEventListener('click', function() {
+            var exampleUrl = 'https://www.youtube.com/embed/aG01KIXWrbU?autoplay=1&enablejsapi=1';
+            document.getElementById('video1').src = exampleUrl;
+            document.getElementById('video2').src = exampleUrl;
+            player1.playVideo();
+            player2.playVideo();
+            player2.mute(); // Mute the second video
+        });
     </script>
 </body>
 </html>
+

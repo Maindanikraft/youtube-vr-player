@@ -31,9 +31,10 @@
             width: 90%;
             height: 80%;
             position: relative;
+            justify-content: space-between; /* Space between the players */
         }
         .video-container iframe {
-            width: 50%;
+            width: 48%; /* Slightly less than 50% to fit with margin */
             height: 100%;
             border: none;
             background-color: #000;
@@ -233,7 +234,6 @@
         }
 
         function toggleFullscreen() {
-            var vrPlayerSection = document.querySelector('.vr-player');
             var fullscreenMode = document.getElementById('fullscreenMode');
             var body = document.body;
 
@@ -258,13 +258,6 @@
             document.body.style.overflow = 'auto';
             isFullscreen = false;
         });
-
-        // Ensure YouTube API is ready
-                window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
-
-        // Play both videos with given URL
-        document.querySelector('#playButton').addEventListener('click', playBothVideos);
     </script>
 </body>
 </html>
-

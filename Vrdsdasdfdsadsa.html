@@ -26,10 +26,6 @@
             background-color: #333;
             margin: 0 10px;
             overflow: hidden;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
         }
         iframe {
             width: 100%;
@@ -38,7 +34,8 @@
         .input-container {
             position: absolute;
             top: 10px;
-            left: 10px;
+            left: 50%;
+            transform: translateX(-50%);
             display: flex;
             align-items: center;
             background: rgba(255, 255, 255, 0.2);
@@ -46,7 +43,7 @@
             padding: 5px;
         }
         .input-container input {
-            width: 150px;
+            width: 200px;
             height: 25px;
             border: none;
             border-radius: 5px;
@@ -72,29 +69,26 @@
 </head>
 <body>
     <div class="container">
-        <div class="video-player" id="player1">
-            <div class="input-container">
-                <input type="text" id="url1" placeholder="Enter YouTube URL">
-                <button onclick="loadVideo('player1', 'url1')">Load Video 1</button>
-            </div>
-        </div>
-        <div class="video-player" id="player2">
-            <div class="input-container">
-                <input type="text" id="url2" placeholder="Enter YouTube URL">
-                <button onclick="loadVideo('player2', 'url2')">Load Video 2</button>
-            </div>
-        </div>
+        <div class="video-player" id="player1"></div>
+        <div class="video-player" id="player2"></div>
+    </div>
+    <div class="input-container">
+        <input type="text" id="url" placeholder="Enter YouTube URL">
+        <button onclick="loadVideo()">Load Videos</button>
     </div>
     <div class="controls">
         <input type="range" id="volume" min="0" max="100" value="100">
         <button onclick="toggleHide()">Hide Buttons</button>
     </div>
     <script>
-        function loadVideo(playerId, urlId) {
-            const player = document.getElementById(playerId);
-            const url = document.getElementById(urlId).value;
+        function loadVideo() {
+            const url = document.getElementById('url').value;
             const videoId = new URL(url).searchParams.get('v');
-            player.innerHTML = `<iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>`;
+            const iframes = `
+                <iframe src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            `;
+            document.getElementById('player1').innerHTML = iframes;
+            document.getElementById('player2').innerHTML = iframes;
         }
 
         function toggleHide() {

@@ -73,11 +73,10 @@
         .vr-section {
             background-color: #000; /* Pitch black background for VR section */
             color: #fff;
-            padding: 20px 10px;
+            padding: 40px 10px;
             text-align: center;
-            height: 100vh; /* Full height for mobile */
+            height: 100vh; /* Full viewport height */
             display: flex;
-            flex-direction: column;
             justify-content: center;
             align-items: center;
         }
@@ -85,21 +84,13 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 5%; /* Reduced space between players */
-            flex-direction: row;
-            width: 100%;
-            height: 80%; /* Adjusted to fit vertically */
+            gap: 5%; /* Space between players */
         }
         .vr-player iframe {
-            width: 45%; /* Slightly smaller size for mobile */
-            height: 80%; /* Adjusted height for mobile */
+            width: 40vw; /* Relative width to viewport */
+            height: 30vh; /* Relative height to viewport */
             border: none;
             border-radius: 10px;
-        }
-        .vr-separator {
-            width: 4px;
-            height: 100%;
-            background-color: #555;
         }
         .controls-container {
             margin-top: 10px;
@@ -173,11 +164,6 @@
         footer a:hover {
             text-decoration: underline;
         }
-        /* Fullscreen Styles */
-        .fullscreen .vr-player iframe {
-            height: 80vh;
-            width: 80vw;
-        }
         /* Responsive Styles */
         @media (max-width: 768px) {
             header {
@@ -197,20 +183,16 @@
             }
             .vr-section {
                 padding: 20px 5px;
-                height: auto; /* Adjust height to fit content */
+                flex-direction: column;
+                height: 80vh; /* Adjusted height for mobile */
             }
             .vr-player {
                 flex-direction: column;
                 gap: 2%;
-                width: 100%;
-                height: 70vh; /* Adjusted for better fit */
             }
             .vr-player iframe {
-                width: 90%;
-                height: 60%; /* Adjusted height for mobile */
-            }
-            .vr-separator {
-                display: none;
+                width: 90vw;
+                height: 25vh;
             }
             .controls-container {
                 margin-top: 5px;
@@ -257,7 +239,6 @@
             <p>Experience high-quality VR video playback with synchronized controls.</p>
             <div class="vr-player">
                 <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-                <div class="vr-separator"></div>
                 <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
             <div class="controls-container">
@@ -284,7 +265,7 @@
                 </div>
                 <div class="feature-item">
                     <h4>Customizable Controls</h4>
-                    <p>Adjust settings to fit your preferences.</p>
+                    <p>Personalize your viewing experience with adjustable controls.</p>
                 </div>
             </div>
         </div>

@@ -25,7 +25,6 @@
             height: 100%;
             position: relative;
             flex-direction: row;
-            overflow: hidden;
             gap: 10px;
         }
         .video-frame {
@@ -112,7 +111,7 @@
         @media (max-width: 768px) {
             .video-container {
                 flex-direction: row;
-                justify-content: space-between;
+                justify-content: center;
                 height: calc(100% - 60px); /* Account for controls height */
             }
             .video-frame {
@@ -160,7 +159,8 @@
 
         var player1, player2;
         var isFullscreen = false;
-        var syncWorker;
+        var syncIntervalTime = 500; // Time to check sync in milliseconds
+        var syncThreshold = 0.005; // Synchronization threshold in seconds
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -210,11 +210,25 @@
                 player1.unMute(); // Unmute the first video
                 player2.unMute(); // Unmute the second video
 
-                if (syncWorker) syncWorker.terminate();
-                syncWorker = new Worker('sync-worker.js');
-                syncWorker.postMessage({ action: 'start', player1: player1, player2: player2 });
+                requestAnimationFrame(syncVideos);
             } else {
                 alert('Please enter a valid YouTube URL');
+            }
+        }
+
+        function syncVideos() {
+            if (player1 && player2) {
+                var time1 = player1.getCurrentTime();
+                var time2 = player2.getCurrentTime();
+                var diff = Math.abs(time1 - time2);
+
+                if (diff > syncThreshold) { // If difference exceeds the sync threshold
+                    var targetTime = Math.min(time1, time2); // Seek to the earlier time
+                    player1.seekTo(targetTime, true);
+                    player2.seekTo(targetTime, true);
+                }
+
+                requestAnimationFrame(syncVideos); // Continue syncing
             }
         }
 
@@ -235,34 +249,6 @@
                 isFullscreen = false;
             }
         });
-    </script>
-    <script id="sync-worker-script" type="javascript/worker">
-        self.onmessage = function(e) {
-            var player1 = e.data.player1;
-            var player2 = e.data.player2;
-            var syncIntervalTime = 100; // Adjust as needed
-
-            function sync() {
-                var time1 = player1.getCurrentTime();
-                var time2 = player2.getCurrentTime();
-                var diff = Math.abs(time1 - time2);
-
-                if (diff > 0.01) { // Adjust sync threshold
-                    var targetTime = Math.min(time1, time2);
-                    player1.seekTo(targetTime, true);
-                    player2.seekTo(targetTime, true);
-                }
-            }
-
-            var syncInterval = setInterval(sync, syncIntervalTime);
-
-            self.onmessage = function(e) {
-                if (e.data.action === 'stop') {
-                    clearInterval(syncInterval);
-                    self.close();
-                }
-            };
-        }
     </script>
 </body>
 </html>

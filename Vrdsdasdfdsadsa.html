@@ -29,10 +29,10 @@
         }
         header h1 {
             margin: 0;
-            font-size: 1.5rem;
+            font-size: 1.2rem;
         }
         nav {
-            margin: 10px 0;
+            margin: 5px 0;
         }
         nav ul {
             list-style-type: none;
@@ -41,19 +41,19 @@
         }
         nav ul li {
             display: inline;
-            margin: 0 10px;
+            margin: 0 5px;
         }
         nav ul li a {
             color: #fff;
             text-decoration: none;
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         nav ul li a:hover {
             text-decoration: underline;
         }
         section {
             display: none;
-            padding: 50px 10px 10px;
+            padding: 30px 10px 10px;
             text-align: center;
         }
         section.active {
@@ -62,35 +62,35 @@
         .hero-section {
             background-color: #222;
             color: #fff;
-            padding: 60px 10px 40px;
+            padding: 40px 10px 30px;
         }
         .hero-section h2 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
         }
         .hero-section p {
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         .vr-section {
             background-color: #000; /* Pitch black background for VR section */
             color: #fff;
-            padding: 40px 10px;
+            padding: 30px 10px;
             text-align: center;
             position: relative; /* Position relative for absolute children */
         }
         .vr-section .controls-container {
-            margin-bottom: 20px;
+            margin-bottom: 10px;
         }
         .vr-section .controls-container input,
         .vr-section .controls-container button {
-            margin: 5px;
-            padding: 5px 10px;
-            font-size: 0.9rem;
+            margin: 3px;
+            padding: 3px 8px;
+            font-size: 0.8rem;
             border-radius: 5px;
             border: none;
         }
         .vr-section .controls-container input {
             width: 80%;
-            max-width: 240px;
+            max-width: 200px;
             background-color: #222;
             color: #fff;
         }
@@ -120,18 +120,18 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 2%; /* Reduced space between players */
+            gap: 1%;
             flex-direction: row;
-            margin-bottom: 40px;
+            margin-bottom: 20px;
         }
         .vr-player iframe {
-            width: 45%; /* Slightly smaller size */
-            height: 300px; /* Adjusted height */
+            width: 40%; /* Slightly smaller size */
+            height: 240px; /* Adjusted height */
             border: none;
-            border-radius: 15px; /* Rounded corners */
+            border-radius: 10px; /* Rounded corners */
         }
         .vr-separator {
-            width: 4px;
+            width: 3px;
             height: 100%;
             background-color: #555;
         }
@@ -148,13 +148,13 @@
             z-index: 20;
         }
         .fullscreen-mode iframe {
-            width: 80vw; /* Responsive width */
-            height: 80vh; /* Responsive height */
-            border-radius: 15px; /* Rounded corners */
+            width: 70vw; /* Responsive width */
+            height: 70vh; /* Responsive height */
+            border-radius: 10px; /* Rounded corners */
         }
         .about {
             background-color: #eee;
-            padding: 40px 10px;
+            padding: 30px 10px;
             text-align: center;
         }
         .about h3 {
@@ -163,21 +163,21 @@
         .features {
             display: flex;
             justify-content: center;
-            gap: 10px;
+            gap: 5px;
             flex-wrap: wrap;
             margin: 0 auto;
         }
         .feature-item {
             background-color: #fff;
             border-radius: 10px;
-            padding: 10px;
-            width: 150px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 8px;
+            width: 130px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s, box-shadow 0.3s;
         }
         .feature-item:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
         footer {
             background-color: #222;
@@ -195,30 +195,30 @@
         /* Responsive Styles */
         @media (max-width: 768px) {
             header {
-                padding: 10px 5px;
+                padding: 8px 5px;
             }
             header h1 {
-                font-size: 1.2rem;
+                font-size: 1rem;
             }
             .hero-section {
-                padding: 50px 5px 30px;
+                padding: 30px 5px 20px;
             }
             .hero-section h2 {
-                font-size: 1.5rem;
+                font-size: 1.2rem;
             }
             .hero-section p {
-                font-size: 0.9rem;
+                font-size: 0.8rem;
             }
             .vr-section {
-                padding: 30px 5px;
+                padding: 20px 5px;
             }
             .vr-player {
                 flex-direction: column;
-                gap: 2%;
+                gap: 1%;
             }
             .vr-player iframe {
                 width: 90%;
-                height: 250px;
+                height: 200px;
             }
             .vr-separator {
                 display: none;
@@ -228,14 +228,14 @@
             }
             .controls-container input,
             .controls-container button {
-                font-size: 0.8rem;
-                padding: 5px 8px;
+                font-size: 0.7rem;
+                padding: 3px 6px;
             }
             .about {
-                padding: 30px 5px;
+                padding: 20px 5px;
             }
             .feature-item {
-                width: 120px;
+                width: 100px;
             }
         }
     </style>

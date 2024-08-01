@@ -160,7 +160,6 @@
             border-radius: 50%;
             position: absolute;
             left: -5px;
-            top: 0;
             cursor: pointer;
         }
     </style>
@@ -307,7 +306,8 @@
         const volumeBar = document.getElementById('volumeBar');
         const volumeHandle = document.getElementById('volumeHandle');
 
-        volumeBar.addEventListener('mousedown', function(event) {
+        volumeHandle.addEventListener('mousedown', function(event) {
+            event.preventDefault(); // Prevent default behavior to avoid text selection
             updateVolume(event);
             document.addEventListener('mousemove', updateVolume);
         });
@@ -318,7 +318,7 @@
 
         // Initialize
         setVolume(volume);
-        document.getElementById('volumeHandle').style.top = '0%';
+        document.getElementById('volumeHandle').style.top = '50%';
     </script>
 </body>
 </html>

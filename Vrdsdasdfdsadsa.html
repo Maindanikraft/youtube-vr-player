@@ -1,112 +1,253 @@
-<script>
-    var tag = document.createElement('script');
-    tag.src = "https://www.youtube.com/iframe_api";
-    var firstScriptTag = document.getElementsByTagName('script')[0];
-    firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-    var player1, player2;
-    var isFullscreen = false;
-    var syncInterval;
-    var syncIntervalTime = 1000; // Check sync every 1 second
-    var syncThreshold = 0.005; // Synchronization threshold in seconds
-
-    function onYouTubeIframeAPIReady() {
-        player1 = new YT.Player('video1', {
-            events: {
-                'onReady': onPlayerReady
-            }
-        });
-        player2 = new YT.Player('video2', {
-            events: {
-                'onReady': onPlayerReady
-            }
-        });
-    }
-
-    function onPlayerReady(event) {
-        if (player1 && player2) {
-            document.getElementById('playButton').disabled = false;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VR YouTube Video Sync</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #000;
+            color: #fff;
+            font-family: Arial, sans-serif;
+            position: relative;
         }
-    }
+        .version {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 14px;
+            color: #fff;
+            background-color: rgba(0, 0, 0, 0.5);
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+        .video-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            height: calc(100% - 60px); /* Adjust for controls height */
+            position: relative;
+        }
+        .video-frame {
+            position: relative;
+            width: 48%;
+            padding-top: 48%;
+            border-radius: 50%;
+            overflow: hidden;
+            mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
+            -webkit-mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
+        }
+        .video-frame iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        .controls-container {
+            position: absolute;
+            bottom: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 10;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .url-input, .hide-controls-button, .play-button {
+            padding: 10px 15px;
+            background-color: #333;
+            color: #fff;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s, transform 0.3s;
+            outline: none;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.5);
+            display: inline-block;
+        }
+        .play-button:hover, .url-input:focus, .hide-controls-button:hover {
+            background-color: #555;
+            transform: translateY(-2px);
+        }
+        .url-input {
+            padding: 8px;
+            border: 1px solid #555;
+            background-color: #222;
+            width: 200px;
+        }
+        .hide-controls-button {
+            width: 40px;
+            height: 40px;
+            font-size: 18px;
+            line-height: 40px;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+        }
+        .hide-controls-button {
+            margin-right: 10px;
+        }
+        .hidden {
+            display: none;
+        }
+        /* Fullscreen Styles */
+        .fullscreen .video-container {
+            height: 100vh;
+            width: 100vw;
+            flex-direction: row;
+        }
+        .fullscreen .video-frame {
+            width: 50%;
+            padding-top: 50%;
+        }
+        .fullscreen .controls-container {
+            display: none;
+        }
+        /* Mobile-Specific Styles */
+        @media (max-width: 768px) {
+            .video-container {
+                height: calc(100% - 60px); /* Account for controls height */
+            }
+            .video-frame {
+                width: 48%;
+                padding-top: 48%;
+            }
+            .controls-container {
+                position: static;
+                transform: none;
+                gap: 5px;
+            }
+            .play-button, .url-input {
+                width: 80%;
+            }
+            .hide-controls-button {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+                line-height: 35px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="version">Version 2.1</div>
+    <button class="hide-controls-button" id="hideControlsButton" aria-label="Hide Controls">×</button>
+    <div class="controls-container" id="controlsContainer">
+        <input type="text" id="urlInput" class="url-input" placeholder="Enter YouTube URL" aria-label="YouTube URL" />
+        <button class="play-button" id="playButton">Play Videos</button>
+    </div>
+    <div class="video-container">
+        <div class="video-frame">
+            <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+        <div class="video-frame">
+            <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        </div>
+    </div>
 
-    function loadVideo(url) {
-        try {
-            var videoId;
-            if (url.includes('youtu.be')) {
-                videoId = url.split('youtu.be/')[1];
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player1, player2;
+        var isFullscreen = false;
+        var syncIntervalTime = 500; // Check sync every 0.5 seconds
+        var syncThreshold = 0.005; // Synchronization threshold in seconds
+
+        function onYouTubeIframeAPIReady() {
+            player1 = new YT.Player('video1', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+            player2 = new YT.Player('video2', {
+                events: {
+                    'onReady': onPlayerReady
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            if (player1 && player2) {
+                document.getElementById('playButton').disabled = false;
+            }
+        }
+
+        function loadVideo(url) {
+            try {
+                var videoId;
+                if (url.includes('youtu.be')) {
+                    videoId = url.split('youtu.be/')[1];
+                } else {
+                    videoId = new URL(url).searchParams.get('v');
+                }
+                if (videoId) {
+                    var embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+                    document.getElementById('video1').src = embedUrl;
+                    document.getElementById('video2').src = embedUrl;
+                } else {
+                    alert('Invalid YouTube URL');
+                }
+            } catch (e) {
+                alert('Error loading video');
+            }
+        }
+
+        function playBothVideos() {
+            var url = document.getElementById('urlInput').value;
+            if (url && player1 && player2) {
+                loadVideo(url);
+                player1.playVideo();
+                player2.playVideo();
+                player1.unMute(); // Unmute the first video
+                player2.unMute(); // Unmute the second video
+
+                // Start synchronization check
+                setTimeout(() => {
+                    player1.seekTo(3, true);
+                    player2.seekTo(3, true);
+                }, 4000);
+
+                syncInterval = setInterval(syncVideos, syncIntervalTime);
             } else {
-                videoId = new URL(url).searchParams.get('v');
-            }
-            if (videoId) {
-                var embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
-                document.getElementById('video1').src = embedUrl;
-                document.getElementById('video2').src = embedUrl;
-            } else {
-                alert('Invalid YouTube URL');
-            }
-        } catch (e) {
-            alert('Error loading video');
-        }
-    }
-
-    function playBothVideos() {
-        var url = document.getElementById('urlInput').value;
-        if (url && player1 && player2) {
-            loadVideo(url);
-            player1.playVideo();
-            player2.playVideo();
-            player1.unMute(); // Unmute the first video
-            player2.unMute(); // Unmute the second video
-
-            // Start synchronization check
-            syncInterval = setInterval(syncVideos, syncIntervalTime);
-
-            // Seek to 3 seconds after 4 seconds
-            setTimeout(function() {
-                seekToThreeSeconds();
-            }, 4000);
-        } else {
-            alert('Please enter a valid YouTube URL');
-        }
-    }
-
-    function syncVideos() {
-        if (player1 && player2) {
-            var time1 = player1.getCurrentTime();
-            var time2 = player2.getCurrentTime();
-            var diff = Math.abs(time1 - time2);
-
-            if (diff > syncThreshold) { // If difference exceeds the sync threshold
-                var targetTime = Math.min(time1, time2); // Seek to the earlier time
-                player1.seekTo(targetTime, true);
-                player2.seekTo(targetTime, true);
+                alert('Please enter a valid YouTube URL');
             }
         }
-    }
 
-    function seekToThreeSeconds() {
-        if (player1 && player2) {
-            player1.seekTo(3, true);
-            player2.seekTo(3, true);
+        function syncVideos() {
+            if (player1 && player2) {
+                var time1 = player1.getCurrentTime();
+                var time2 = player2.getCurrentTime();
+                var diff = Math.abs(time1 - time2);
+
+                if (diff > syncThreshold) { // If difference exceeds the sync threshold
+                    var targetTime = Math.min(time1, time2); // Seek to the earlier time
+                    player1.seekTo(targetTime, true);
+                    player2.seekTo(targetTime, true);
+                }
+            }
         }
-    }
 
-    document.getElementById('playButton').addEventListener('click', playBothVideos);
+        document.getElementById('playButton').addEventListener('click', playBothVideos);
 
-    document.getElementById('hideControlsButton').addEventListener('click', function() {
-        var controlsContainer = document.getElementById('controlsContainer');
-        controlsContainer.classList.toggle('hidden');
-    });
-
-    document.getElementById('fullscreenButton').addEventListener('click', function() {
-        var body = document.body;
-        if (!isFullscreen) {
-            body.classList.add('fullscreen');
-            isFullscreen = true;
-        } else {
-            body.classList.remove('fullscreen');
-            isFullscreen = false;
-        }
-    });
-</script>
-
+        document.getElementById('hideControlsButton').addEventListener('click', function() {
+            var controlsContainer = document.getElementById('controlsContainer');
+            controlsContainer.classList.toggle('hidden');
+        });
+    </script>
+</body>
+</html>

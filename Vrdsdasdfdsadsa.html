@@ -161,7 +161,6 @@
         var player1, player2;
         var isFullscreen = false;
         var syncInterval;
-        var syncIntervalTime = 800; // Adjust this value for optimal sync check interval
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -233,7 +232,7 @@
                         player2.seekTo(targetTime, true);
                     }
                 }
-            }, syncIntervalTime); // Check sync at defined interval
+            }, 900); // Check every 0.9 seconds
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);

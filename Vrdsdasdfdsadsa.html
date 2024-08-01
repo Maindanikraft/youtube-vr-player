@@ -5,137 +5,151 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced VR Video Site</title>
     <style>
-        /* Reset and global styles */
-        * {
+        body {
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        body {
+            overflow: hidden;
             font-family: Arial, sans-serif;
-            background-color: #000; /* Black background for the whole site */
-            color: #fff; /* White text color for contrast */
-            overflow-x: hidden;
-        }
-        header, footer {
-            background-color: #111; /* Slightly lighter black for header and footer */
-            padding: 10px;
-            text-align: center;
-        }
-        header a, footer a {
+            background-color: #000;
             color: #fff;
-            text-decoration: none;
-            margin: 0 10px;
-            transition: color 0.3s;
         }
-        header a:hover, footer a:hover {
-            color: #aaa; /* Light gray for hover effect */
-        }
-        .nav {
-            margin: 0;
-        }
-        .nav-link {
-            display: inline-block;
-            margin: 0 10px;
+        header {
+            background-color: #111;
             padding: 10px 20px;
-            background-color: #222; /* Darker background for nav links */
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+        header nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        header nav a {
             color: #fff;
             text-decoration: none;
-            border-radius: 5px;
-            transition: background-color 0.3s;
+            margin: 0 15px;
+            font-size: 18px;
         }
-        .nav-link:hover {
-            background-color: #444; /* Slightly lighter on hover */
+        header nav a:hover {
+            text-decoration: underline;
+        }
+        .main-content {
+            padding: 80px 20px 20px; /* Space for fixed header */
         }
         section {
             padding: 20px;
-            background-color: #000; /* Black background for sections */
-            border-top: 1px solid #333;
+            background-color: #000;
+            color: #fff;
+            margin-bottom: 20px;
         }
-        .vr-player-section, .fullscreen-mode {
-            display: none;
-            flex-direction: row;
-            justify-content: center;
+        .video-container {
+            display: flex;
+            flex-direction: column;
             align-items: center;
+            justify-content: center;
+            height: calc(100vh - 120px); /* Adjust height to fit the viewport */
+            position: relative;
+        }
+        .video-container iframe {
+            width: 100%;
+            max-width: 90vw;
+            height: 45vh; /* Adjust height */
+            border: none;
+            background: #000;
+        }
+        .controls-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: absolute;
+            bottom: 10px;
+            width: 100%;
+        }
+        .control-button {
+            background: #222;
+            color: #fff;
+            border: 1px solid #444;
+            border-radius: 5px;
+            padding: 10px;
+            margin: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+        .control-button:hover {
+            background-color: #333;
+            border-color: #555;
+        }
+        .hide-buttons {
+            position: absolute;
+            top: 10px;
+            right: 60px;
+        }
+        .fullscreen-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+        }
+        .fullscreen-mode {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
             height: 100vh;
-            background-color: #000; /* Pitch black background */
-            z-index: 9999;
-        }
-        .vr-player-section iframe, .fullscreen-mode iframe {
-            width: 45%;
-            height: 100%;
-            border: none;
-        }
-        .vr-player-section iframe {
-            border-radius: 0; /* Rectangular players */
+            background: #000;
+            z-index: 999;
+            justify-content: center;
+            align-items: center;
+            flex-direction: row;
         }
         .fullscreen-mode iframe {
-            border-radius: 0;
+            width: 50%;
+            height: 100%;
         }
-        .controls-container {
-            position: absolute;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 10;
-            display: flex;
-            justify-content: center;
-            gap: 10px;
-        }
-        .controls-container button, .controls-container input {
-            background-color: #333;
+        .about, .contact {
+            background-color: #000;
             color: #fff;
-            border: none;
-            border-radius: 5px;
-            padding: 10px;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .controls-container button:hover, .controls-container input:focus {
-            background-color: #555;
-        }
-        .hide-buttons {
-            margin-right: 10px;
-        }
-        .fullscreen-button {
-            margin-left: 10px;
-        }
-        .about, #contact {
-            text-align: center;
+            padding: 20px;
         }
         .features {
             display: flex;
-            justify-content: center;
-            gap: 20px;
+            justify-content: space-around;
         }
         .feature-item {
-            background-color: #222;
-            padding: 10px;
+            background: #333;
+            padding: 15px;
             border-radius: 5px;
-            width: 150px;
-        }
-        footer {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
+            margin: 5px;
+            width: 30%;
             text-align: center;
         }
-        /* Media Queries for Responsive Design */
+        footer {
+            background-color: #111;
+            color: #fff;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+        footer a {
+            color: #fff;
+            text-decoration: none;
+        }
+        footer a:hover {
+            text-decoration: underline;
+        }
         @media (max-width: 768px) {
-            .vr-player-section iframe, .fullscreen-mode iframe {
-                width: 100%;
-                height: 50%;
+            .video-container iframe {
+                height: 50vh;
             }
-            .controls-container {
-                flex-direction: column;
-            }
-            .controls-container button, .controls-container input {
-                width: 100%;
-                margin: 5px 0;
+            .control-button {
+                font-size: 14px;
+                padding: 8px;
             }
         }
     </style>
@@ -150,50 +164,51 @@
         </nav>
     </header>
 
-    <!-- Home Section -->
-    <section id="home">
-        <h1>Welcome to the Advanced VR Video Site</h1>
-        <p>Explore high-quality VR video playback with synchronized controls.</p>
-    </section>
+    <div class="main-content">
+        <!-- Home Section -->
+        <section id="home">
+            <h1>Welcome to the Advanced VR Video Site</h1>
+            <p>Experience high-quality VR video playback with synchronized controls and more.</p>
+        </section>
 
-    <!-- VR Player Section -->
-    <section id="vr-player">
-        <div class="vr-player-section">
-            <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <div class="controls-container">
-                <input type="text" id="urlInput" placeholder="Enter YouTube URL" aria-label="YouTube URL">
-                <button id="playButton">Play Videos</button>
-                <button class="hide-buttons" id="hideControlsButton">Hide Buttons</button>
-                <button class="fullscreen-button" id="fullscreenButton">Fullscreen</button>
-                <button class="example-button">Example Video</button>
+        <!-- VR Player Section -->
+        <section id="vr-player">
+            <h2>VR Video Player</h2>
+            <div class="video-container">
+                <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <div class="controls-container">
+                    <input type="text" id="urlInput" class="control-button" placeholder="Enter YouTube URL">
+                    <button id="playButton" class="control-button">Play Videos</button>
+                    <button class="control-button example-button">Example Video</button>
+                    <button class="control-button hide-buttons">Hide Buttons</button>
+                    <button class="control-button fullscreen-button">Fullscreen</button>
+                </div>
             </div>
-        </div>
-        <div id="fullscreenMode" class="fullscreen-mode">
-            <iframe id="fullscreenVideo1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-            <iframe id="fullscreenVideo2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-        </div>
-    </section>
+            <div id="fullscreenMode" class="fullscreen-mode">
+                <iframe id="fullscreenVideo1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <iframe id="fullscreenVideo2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+            </div>
+        </section>
 
-    <!-- About Section -->
-    <section id="about">
-        <h3>About Us</h3>
-        <p>Learn more about our innovative technology and the team behind it.</p>
-        <div class="features">
-            <div class="feature-item">Feature 1</div>
-            <div class="feature-item">Feature 2</div>
-            <div class="feature-item">Feature 3</div>
-        </div>
-    </section>
+        <!-- About Section -->
+        <section id="about">
+            <h3>About Us</h3>
+            <p>Learn more about our innovative technology and the team behind it.</p>
+            <div class="features">
+                <div class="feature-item">Feature 1</div>
+                <div class="feature-item">Feature 2</div>
+                <div class="feature-item">Feature 3</div>
+            </div>
+        </section>
 
-    <!-- Contact Section -->
-    <section id="contact">
-        <div class="content">
+        <!-- Contact Section -->
+        <section id="contact">
             <h3>Contact Us</h3>
             <p>Email: <a href="mailto:maindanikraft@gmail.com">maindanikraft@gmail.com</a></p>
-            <p>Discord: <a href="https://discord.com/users/Brawlegal">Brawlegal</a></p>
-        </div>
-    </section>
+            <p>Discord: Brawlegal</p>
+        </section>
+    </div>
 
     <footer>
         <p>&copy; 2024 Advanced VR Video Site. All rights reserved. <a href="#contact">Contact</a></p>
@@ -201,18 +216,16 @@
 
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // Navigation Link Activation
         document.querySelectorAll('.nav-link').forEach(link => {
             link.addEventListener('click', function(e) {
                 e.preventDefault();
                 document.querySelectorAll('section').forEach(section => {
-                    section.style.display = 'none';
+                    section.classList.remove('active');
                 });
-                document.querySelector(this.getAttribute('href')).style.display = 'block';
+                document.querySelector(this.getAttribute('href')).classList.add('active');
             });
         });
 
-        // VR Player Controls
         var player1, player2;
         var isFullscreen = false;
         var syncInterval;
@@ -256,7 +269,6 @@
             }
         }
 
-       
         function playBothVideos() {
             var url = document.getElementById('urlInput').value;
             if (url && player1 && player2) {
@@ -281,7 +293,7 @@
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > 0.09) { // If difference is more than 0.09 seconds
+                    if (diff > 0.1) { // If difference is more than 0.1 seconds
                         var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
@@ -292,57 +304,30 @@
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
 
-        document.getElementById('hideControlsButton').addEventListener('click', function() {
-            var controlsContainer = document.getElementById('controlsContainer');
+        document.querySelector('.hide-buttons').addEventListener('click', function() {
+            var controlsContainer = document.querySelector('.controls-container');
             controlsContainer.classList.toggle('hidden');
         });
 
-        document.getElementById('fullscreenButton').addEventListener('click', function() {
-            var vrSection = document.querySelector('.vr-player-section');
+        document.querySelector('.fullscreen-button').addEventListener('click', function() {
             var fullscreenMode = document.getElementById('fullscreenMode');
-
             if (!isFullscreen) {
-                vrSection.style.display = 'none';
                 fullscreenMode.style.display = 'flex';
+                var url = document.getElementById('urlInput').value;
+                if (url && player1 && player2) {
+                    loadVideo(url);
+                    document.getElementById('fullscreenVideo1').src = document.getElementById('video1').src;
+                    document.getElementById('fullscreenVideo2').src = document.getElementById('video2').src;
+                    player1.playVideo();
+                    player2.playVideo();
+                    player2.mute();
+                }
                 isFullscreen = true;
             } else {
-                vrSection.style.display = 'flex';
                 fullscreenMode.style.display = 'none';
                 isFullscreen = false;
             }
         });
-
-        document.querySelector('.example-button').addEventListener('click', function() {
-            var exampleUrl = 'https://www.youtube.com/embed/aG01KIXWrbU?autoplay=1&enablejsapi=1';
-            document.getElementById('video1').src = exampleUrl;
-            document.getElementById('video2').src = exampleUrl;
-            player1.playVideo();
-            player2.playVideo();
-            player2.mute(); // Mute the second video
-        });
-
-        // Fix for background color issue
-        document.querySelectorAll('.vr-player-section, .fullscreen-mode').forEach(el => {
-            el.style.backgroundColor = '#000'; // Ensure the background is pitch black
-        });
-
-        // Improved sync handling
-        function handleVideoSync() {
-            if (player1 && player2) {
-                let currentTime1 = player1.getCurrentTime();
-                let currentTime2 = player2.getCurrentTime();
-                let difference = Math.abs(currentTime1 - currentTime2);
-
-                if (difference > 0.09) {
-                    let targetTime = Math.min(currentTime1, currentTime2);
-                    player1.seekTo(targetTime, true);
-                    player2.seekTo(targetTime, true);
-                }
-            }
-        }
-
-        setInterval(handleVideoSync, 1000); // Sync check every second
-
     </script>
 </body>
 </html>

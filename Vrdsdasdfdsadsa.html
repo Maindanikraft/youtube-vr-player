@@ -171,8 +171,8 @@
 
         var player1, player2;
         var isFullscreen = false;
-        var SYNC_INTERVAL = 500; // Sync check interval in milliseconds
-        var MAX_SPEED_INCREASE = 2.0; // Maximum speed increase factor
+        var SYNC_INTERVAL = 500; // Sync interval in milliseconds
+        var syncTolerance = 0.005; // Maximum acceptable time difference in seconds
         var version = 2.1;
 
         function onYouTubeIframeAPIReady() {
@@ -241,29 +241,12 @@
                 if (player1 && player2) {
                     var time1 = player1.getCurrentTime();
                     var time2 = player2.getCurrentTime();
-                    var diff = time1 - time2;
+                    var diff = Math.abs(time1 - time2);
 
-                    if (Math.abs(diff) > 0.005) { // If difference is more than 0.005 seconds
-                        var fasterPlayer, slowerPlayer, speedAdjustment;
-
-                        if (diff > 0) {
-                            fasterPlayer = player1;
-                            slowerPlayer = player2;
-                        } else {
-                            fasterPlayer = player2;
-                            slowerPlayer = player1;
-                        }
-
-                        speedAdjustment = 1 + Math.abs(diff) / 2; // Increase speed by a factor based on the delay
-                        speedAdjustment = Math.min(speedAdjustment, MAX_SPEED_INCREASE); // Cap the maximum speed increase
-
-                        // Adjust playback speed
-                        fasterPlayer.setPlaybackRate(1);
-                        slowerPlayer.setPlaybackRate(speedAdjustment);
-                    } else {
-                        // If synchronization is good, reset speeds to normal
-                        player1.setPlaybackRate(1);
-                        player2.setPlaybackRate(1);
+                    if (diff > syncTolerance) { // If difference is more than syncTolerance seconds
+                        var targetTime = Math.min(time1, time2); // Seek to the earlier time
+                        player1.seekTo(targetTime, true);
+                        player2.seekTo(targetTime, true);
                     }
                 }
             }, SYNC_INTERVAL); // Check every SYNC_INTERVAL milliseconds
@@ -286,14 +269,6 @@
                 isFullscreen = false;
             }
         });
-
-        function incrementVersion() {
-            version += 0.1;
-            document.getElementById('versionNumber').innerText = 'Version ' + version.toFixed(1);
-        }
-
-        // Call incrementVersion() every time there's a code change
-        incrementVersion();
     </script>
 </body>
 </html>

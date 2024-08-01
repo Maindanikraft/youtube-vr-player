@@ -134,20 +134,9 @@
                 margin-bottom: 0;
             }
         }
-
-        /* Version Number Styles */
-        .version-number {
-            position: absolute;
-            top: 10px;
-            left: 10px;
-            color: #fff;
-            font-size: 14px;
-            z-index: 20;
-        }
     </style>
 </head>
 <body>
-    <div class="version-number" id="versionNumber">Version 2.1</div>
     <button class="hide-controls-button" id="hideControlsButton" aria-label="Hide Controls">×</button>
     <button class="fullscreen-button" id="fullscreenButton" aria-label="Toggle Fullscreen">⛶</button>
     <div class="controls-container" id="controlsContainer">
@@ -162,6 +151,7 @@
             <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
     </div>
+    <div id="version" style="position: absolute; top: 10px; left: 10px; color: #fff;">Version 2.2</div>
 
     <script>
         var tag = document.createElement('script');
@@ -171,9 +161,8 @@
 
         var player1, player2;
         var isFullscreen = false;
-        var SYNC_INTERVAL = 500; // Sync interval in milliseconds
-        var syncTolerance = 0.005; // Maximum acceptable time difference in seconds
-        var version = 2.1;
+        var syncInterval;
+        var syncCheckInterval = 500; // Check synchronization every 500 milliseconds
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -220,12 +209,6 @@
                 loadVideo(url);
                 player1.playVideo();
                 player2.playVideo();
-                player1.unMute(); // Unmute first video
-                player2.unMute(); // Unmute second video
-
-                // Set volume to maximum
-                player1.setVolume(100);
-                player2.setVolume(100);
 
                 // Start synchronization check
                 startSyncCheck();
@@ -243,13 +226,14 @@
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > syncTolerance) { // If difference is more than syncTolerance seconds
+                    if (diff > 0.005) { // If difference is more than 0.005 seconds
+                        // Adjust the video to be in sync
                         var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
                     }
                 }
-            }, SYNC_INTERVAL); // Check every SYNC_INTERVAL milliseconds
+            }, syncCheckInterval); // Check every 500 milliseconds
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);

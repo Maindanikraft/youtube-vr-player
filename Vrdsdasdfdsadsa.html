@@ -16,7 +16,6 @@
             background-color: #000;
             color: #fff;
             font-family: Arial, sans-serif;
-            position: relative;
         }
         .video-container {
             display: flex;
@@ -36,7 +35,6 @@
             mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
             -webkit-mask-image: radial-gradient(circle at center, white 50%, transparent 100%);
             margin-bottom: 2%;
-            transition: all 0.3s ease;
         }
         .video-frame iframe {
             position: absolute;
@@ -122,6 +120,7 @@
         .fullscreen .controls-container {
             display: none;
         }
+
         /* Mobile-Specific Styles */
         @media (max-width: 768px) {
             .video-container {
@@ -135,9 +134,20 @@
                 margin-bottom: 0;
             }
         }
+
+        /* Version Number Styles */
+        .version-number {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: #fff;
+            font-size: 14px;
+            z-index: 20;
+        }
     </style>
 </head>
 <body>
+    <div class="version-number" id="versionNumber">Version 2.1</div>
     <button class="hide-controls-button" id="hideControlsButton" aria-label="Hide Controls">×</button>
     <button class="fullscreen-button" id="fullscreenButton" aria-label="Toggle Fullscreen">⛶</button>
     <div class="controls-container" id="controlsContainer">
@@ -153,9 +163,7 @@
         </div>
     </div>
 
-    <script defer>
-        const SYNC_INTERVAL = 100; // Check sync every 100 milliseconds
-
+    <script>
         var tag = document.createElement('script');
         tag.src = "https://www.youtube.com/iframe_api";
         var firstScriptTag = document.getElementsByTagName('script')[0];
@@ -163,7 +171,9 @@
 
         var player1, player2;
         var isFullscreen = false;
-        var syncInterval;
+        var SYNC_INTERVAL = 500; // Sync check interval in milliseconds
+        var MAX_SPEED_INCREASE = 2.0; // Maximum speed increase factor
+        var version = 2.1;
 
         function onYouTubeIframeAPIReady() {
             player1 = new YT.Player('video1', {
@@ -210,10 +220,10 @@
                 loadVideo(url);
                 player1.playVideo();
                 player2.playVideo();
-                player1.unMute(); // Unmute the first video
-                player2.unMute();  // Unmute the second video
+                player1.unMute(); // Unmute first video
+                player2.unMute(); // Unmute second video
 
-                // Set maximum volume
+                // Set volume to maximum
                 player1.setVolume(100);
                 player2.setVolume(100);
 
@@ -234,15 +244,29 @@
                     var diff = time1 - time2;
 
                     if (Math.abs(diff) > 0.005) { // If difference is more than 0.005 seconds
-                        // Adjust player times to synchronize
+                        var fasterPlayer, slowerPlayer, speedAdjustment;
+
                         if (diff > 0) {
-                            player1.seekTo(time2, true); // Adjust player1 to match player2
+                            fasterPlayer = player1;
+                            slowerPlayer = player2;
                         } else {
-                            player2.seekTo(time1, true); // Adjust player2 to match player1
+                            fasterPlayer = player2;
+                            slowerPlayer = player1;
                         }
+
+                        speedAdjustment = 1 + Math.abs(diff) / 2; // Increase speed by a factor based on the delay
+                        speedAdjustment = Math.min(speedAdjustment, MAX_SPEED_INCREASE); // Cap the maximum speed increase
+
+                        // Adjust playback speed
+                        fasterPlayer.setPlaybackRate(1);
+                        slowerPlayer.setPlaybackRate(speedAdjustment);
+                    } else {
+                        // If synchronization is good, reset speeds to normal
+                        player1.setPlaybackRate(1);
+                        player2.setPlaybackRate(1);
                     }
                 }
-            }, SYNC_INTERVAL); // Check sync every SYNC_INTERVAL milliseconds
+            }, SYNC_INTERVAL); // Check every SYNC_INTERVAL milliseconds
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
@@ -262,6 +286,14 @@
                 isFullscreen = false;
             }
         });
+
+        function incrementVersion() {
+            version += 0.1;
+            document.getElementById('versionNumber').innerText = 'Version ' + version.toFixed(1);
+        }
+
+        // Call incrementVersion() every time there's a code change
+        incrementVersion();
     </script>
 </body>
 </html>

@@ -120,7 +120,6 @@
         .fullscreen .controls-container {
             display: none;
         }
-
         /* Mobile-Specific Styles */
         @media (max-width: 768px) {
             .video-container {
@@ -133,6 +132,32 @@
                 padding-top: 45%;
                 margin-bottom: 0;
             }
+        }
+        /* Volume Bar Styles */
+        .volume-bar {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 100px;
+            width: 10px;
+            background-color: #555;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 30; /* Ensure the volume bar is above everything */
+        }
+        .volume-handle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background-color: #fff;
+            border-radius: 50%;
+            left: -5px;
+            cursor: pointer;
+            z-index: 31; /* Ensure the volume handle is above the bar */
+        }
+        .hidden-volume-bar {
+            display: none;
         }
     </style>
 </head>
@@ -150,6 +175,11 @@
         <div class="video-frame">
             <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
         </div>
+    </div>
+
+    <!-- Volume Bar -->
+    <div class="volume-bar" id="volumeBar">
+        <div class="volume-handle" id="volumeHandle"></div>
     </div>
 
     <script>
@@ -225,7 +255,7 @@
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > 0.1) { // If difference is more than 0.1 seconds
+                    if (diff > 0.05) { // If difference is more than 0.05 seconds
                         var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
@@ -234,11 +264,17 @@
             }, 1000); // Check every second
         }
 
+        function setVolume(value) {
+            player1.setVolume(value * 100); // Set volume between 0 and 100
+        }
+
         document.getElementById('playButton').addEventListener('click', playBothVideos);
 
         document.getElementById('hideControlsButton').addEventListener('click', function() {
             var controlsContainer = document.getElementById('controlsContainer');
+            var volumeBar = document.getElementById('volumeBar');
             controlsContainer.classList.toggle('hidden');
+            volumeBar.classList.toggle('hidden');
         });
 
         document.getElementById('fullscreenButton').addEventListener('click', function() {
@@ -251,6 +287,45 @@
                 isFullscreen = false;
             }
         });
+
+        // Volume Bar Dragging
+        var volumeBar = document.getElementById('volumeBar');
+        var volumeHandle = document.getElementById('volumeHandle');
+        var isDragging = false;
+
+        volumeHandle.addEventListener('mousedown', function(event) {
+            isDragging = true;
+        });
+
+        document.addEventListener('mouseup', function(event) {
+            isDragging = false;
+        });
+
+        document.addEventListener('mousemove', function(event) {
+            if (isDragging) {
+                var rect = volumeBar.getBoundingClientRect();
+                var y = event.clientY - rect.top;
+                var percentage = Math.max(0, Math.min(100, (100 - (y / rect.height) * 100)));
+                setVolume(percentage / 100);
+                volumeHandle.style.top = y + 'px';
+            }
+        });
+
+        // Initialize volume bar
+        function initVolumeBar() {
+            var volume = player1.getVolume() / 100;
+            var rect = volumeBar.getBoundingClientRect();
+            var y = (1 - volume) * rect.height;
+            volumeHandle.style.top = y + 'px';
+        }
+
+        // Wait for the player to be ready before initializing volume bar
+        function onPlayerReady(event) {
+            if (player1 && player2) {
+                document.getElementById('playButton').disabled = false;
+                initVolumeBar();
+            }
+        }
     </script>
 </body>
 </html>

@@ -75,22 +75,24 @@
             color: #fff;
             padding: 40px 10px;
             text-align: center;
-            height: 100vh; /* Full viewport height */
-            display: flex;
-            justify-content: center;
-            align-items: center;
         }
         .vr-player {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 5%; /* Space between players */
+            gap: 3%; /* Reduced space between players */
+            flex-direction: row;
         }
         .vr-player iframe {
-            width: 40vw; /* Relative width to viewport */
-            height: 30vh; /* Relative height to viewport */
+            width: 40%; /* Slightly smaller size */
+            height: 250px; /* Adjusted height */
             border: none;
             border-radius: 10px;
+        }
+        .vr-separator {
+            width: 4px;
+            height: 100%;
+            background-color: #555;
         }
         .controls-container {
             margin-top: 10px;
@@ -164,6 +166,11 @@
         footer a:hover {
             text-decoration: underline;
         }
+        /* Fullscreen Styles */
+        .fullscreen .vr-player iframe {
+            height: 80vh;
+            width: 80vw;
+        }
         /* Responsive Styles */
         @media (max-width: 768px) {
             header {
@@ -182,17 +189,18 @@
                 font-size: 0.9rem;
             }
             .vr-section {
-                padding: 20px 5px;
-                flex-direction: column;
-                height: 80vh; /* Adjusted height for mobile */
+                padding: 30px 5px;
             }
             .vr-player {
                 flex-direction: column;
                 gap: 2%;
             }
             .vr-player iframe {
-                width: 90vw;
-                height: 25vh;
+                width: 90%;
+                height: 200px;
+            }
+            .vr-separator {
+                display: none;
             }
             .controls-container {
                 margin-top: 5px;
@@ -239,6 +247,7 @@
             <p>Experience high-quality VR video playback with synchronized controls.</p>
             <div class="vr-player">
                 <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                <div class="vr-separator"></div>
                 <iframe id="video2" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
             </div>
             <div class="controls-container">

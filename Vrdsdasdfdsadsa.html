@@ -5,112 +5,108 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Advanced VR Video Site</title>
     <style>
+        /* Global Styles */
         body {
             margin: 0;
-            padding: 0;
+            overflow: hidden;
             font-family: Arial, sans-serif;
-            transition: background-color 0.3s ease;
+            background-color: #f0f0f0; /* Updated home page background color */
+            color: #333;
         }
-        /* Home Page Styles */
-        .home-page {
-            background: url('https://www.example.com/your-personalized-background.jpg') no-repeat center center fixed;
-            background-size: cover;
+        header {
+            background-color: #222;
             color: #fff;
+            padding: 20px;
             text-align: center;
-            height: 100vh;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            left: 0;
+            z-index: 10;
+        }
+        header h1 {
+            margin: 0;
+            font-size: 2rem;
+        }
+        nav {
+            margin: 20px 0;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+            text-align: center;
+        }
+        nav ul li {
+            display: inline;
+            margin: 0 15px;
+        }
+        nav ul li a {
+            color: #fff;
+            text-decoration: none;
+            font-size: 1.2rem;
+        }
+        nav ul li a:hover {
+            text-decoration: underline;
+        }
+        section {
+            display: none;
+            padding: 60px 20px 20px;
+            text-align: center;
+        }
+        section.active {
+            display: block;
+        }
+        .hero-section {
+            background-color: #222;
+            color: #fff;
+            padding: 100px 20px 60px;
+        }
+        .hero-section h2 {
+            font-size: 2.5rem;
+        }
+        .hero-section p {
+            font-size: 1.2rem;
+        }
+        .vr-section {
+            background-color: #000; /* Pitch black background for VR section */
+            color: #fff;
+            padding: 60px 20px;
+            text-align: center;
+        }
+        .vr-player {
             display: flex;
             justify-content: center;
             align-items: center;
+            gap: 4%; /* Space between players */
+            flex-direction: row;
         }
-        .home-page h1 {
-            font-family: 'Roboto', sans-serif;
-            font-size: 4em;
-            margin: 0;
-        }
-        .home-page p {
-            font-family: 'Open Sans', sans-serif;
-            font-size: 1.5em;
-            margin: 20px 0;
-        }
-        .home-page .nav-link {
-            font-family: 'Lato', sans-serif;
-            font-size: 1.2em;
-            color: #fff;
-            background-color: rgba(0, 0, 0, 0.5);
-            padding: 10px 20px;
-            border-radius: 5px;
-            text-decoration: none;
-            margin: 10px;
-        }
-
-        /* About Page Styles */
-        .about {
-            background-color: #f0f0f0;
-            color: #333;
-            padding: 50px 20px;
-            font-family: 'Montserrat', sans-serif;
-        }
-        .about h3 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-        .about p {
-            font-size: 1.2em;
-            line-height: 1.6;
-        }
-
-        /* Features Page Styles */
-        .features {
-            background-color: #e0e0e0;
-            color: #333;
-            padding: 50px 20px;
-            font-family: 'Poppins', sans-serif;
-        }
-        .features h3 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
-        }
-        .features .feature-item {
-            margin-bottom: 20px;
-        }
-        .features .feature-item h4 {
-            font-size: 1.8em;
-            margin-bottom: 10px;
-        }
-        .features .feature-item p {
-            font-size: 1.2em;
-        }
-
-        /* VR Player Section Styles */
-        .vr-section {
-            background-color: #000;
-            color: #fff;
-            padding: 50px 20px;
-            font-family: 'Arial', sans-serif;
-            text-align: center;
-        }
-        .vr-section iframe {
-            width: 45%;
-            height: 300px;
+        .vr-player iframe {
+            width: 45%; /* Slightly larger and with rounded corners */
+            height: 400px;
             border: none;
-            border-radius: 15px; /* Rounded corners */
+            border-radius: 15px;
         }
         .vr-separator {
-            display: inline-block;
-            width: 10px;
+            width: 5px;
+            height: 100%;
+            background-color: #555;
         }
         .controls-container {
             margin-top: 20px;
         }
-        .controls-container input, .controls-container button {
-            font-size: 1.2em;
-            padding: 10px;
-            border: none;
+        .controls-container input,
+        .controls-container button {
+            margin: 10px;
+            padding: 10px 15px;
+            font-size: 1rem;
             border-radius: 5px;
-            margin: 5px;
+            border: none;
         }
         .controls-container input {
-            width: 50%;
+            width: 80%;
+            max-width: 300px;
+            background-color: #222;
+            color: #fff;
         }
         .controls-container button {
             background-color: #333;
@@ -127,123 +123,96 @@
         .example-button:hover {
             background-color: #0056b3;
         }
-
-        /* Contact Section Styles */
-        .contact {
-            background-color: #333;
-            color: #fff;
-            padding: 50px 20px;
-            font-family: 'Verdana', sans-serif;
+        .about {
+            background-color: #eee;
+            padding: 60px 20px;
             text-align: center;
         }
-        .contact h3 {
-            font-size: 2.5em;
-            margin-bottom: 20px;
+        .about h3 {
+            margin-top: 0;
         }
-        .contact p {
-            font-size: 1.2em;
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin: 0 auto;
         }
-        .contact a {
-            color: #1e90ff;
-            text-decoration: none;
+        .feature-item {
+            background-color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+            width: 200px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
         }
-        .contact a:hover {
-            text-decoration: underline;
+        .feature-item:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2);
         }
-
-        /* Footer Styles */
         footer {
             background-color: #222;
-            color: #ccc;
+            color: #fff;
             padding: 20px;
             text-align: center;
-            font-family: 'Arial', sans-serif;
         }
         footer a {
-            color: #1e90ff;
+            color: #007bff;
             text-decoration: none;
         }
         footer a:hover {
             text-decoration: underline;
         }
-
+        /* Fullscreen Styles */
+        .fullscreen .vr-player iframe {
+            height: 100vh;
+            width: 50vw;
+        }
         /* Responsive Styles */
         @media (max-width: 768px) {
-            .home-page h1 {
-                font-size: 2.5em;
+            .hero-section {
+                padding: 80px 20px 40px;
             }
-            .home-page p {
-                font-size: 1.2em;
+            .vr-player {
+                flex-direction: column;
             }
-            .home-page .nav-link {
-                font-size: 1em;
-            }
-            .vr-section iframe {
+            .vr-player iframe {
                 width: 90%;
-                height: 200px;
+                height: 300px;
+                margin-bottom: 10px;
             }
-            .controls-container input, .controls-container button {
-                font-size: 1em;
-                padding: 8px;
+            .vr-separator {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
+    <header>
+        <h1>Advanced VR Video Site</h1>
+        <nav>
+            <ul>
+                <li><a href="#home" class="nav-link">Home</a></li>
+                <li><a href="#vr" class="nav-link">VR Player</a></li>
+                <li><a href="#about" class="nav-link">About</a></li>
+                <li><a href="#contact" class="nav-link">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
 
-    <!-- Navigation -->
-    <nav>
-        <a href="#home" class="nav-link">Home</a>
-        <a href="#about" class="nav-link">About</a>
-        <a href="#features" class="nav-link">Features</a>
-        <a href="#vr" class="nav-link">VR Player</a>
-        <a href="#contact" class="nav-link">Contact</a>
-    </nav>
-
-    <!-- Home Page -->
-    <section id="home" class="home-page">
-        <div>
-            <h1>Welcome to the Advanced VR Video Site</h1>
-            <p>Immerse yourself in synchronized VR video experiences.</p>
-            <a href="#features" class="nav-link">Explore Features</a>
-        </div>
-    </section>
-
-    <!-- About Page -->
-    <section id="about" class="about">
-        <div>
-            <h3>About Us</h3>
-            <p>Our site offers a cutting-edge VR video experience with synchronized playback and customizable controls.</p>
-            <p>Our mission is to provide the highest quality VR video content for an unparalleled viewing experience.</p>
-        </div>
-    </section>
-
-    <!-- Features Page -->
-    <section id="features" class="features">
-        <div>
-            <h3>Features</h3>
-            <div class="feature-list">
-                <div class="feature-item">
-                    <h4>High-Definition VR Playback</h4>
-                    <p>Experience VR videos in stunning 4K resolution with ultra-low latency.</p>
-                </div>
-                <div class="feature-item">
-                    <h4>Synchronized Playback</h4>
-                    <p>Watch synchronized VR videos with perfect timing across multiple devices.</p>
-                </div>
-                <div class="feature-item">
-                    <h4>Customizable Controls</h4>
-                    <p>Adjust video settings and controls to fit your VR environment perfectly.</p>
-                </div>
-            </div>
+    <!-- Home Section -->
+    <section id="home" class="hero-section active">
+        <div class="content">
+            <h2>Welcome to the Advanced VR Video Site</h2>
+            <p>Discover the future of video entertainment with our state-of-the-art VR player technology.</p>
         </div>
     </section>
 
     <!-- VR Player Section -->
     <section id="vr" class="vr-section">
-        <div>
+        <div class="content">
             <h3>VR Video Player</h3>
-            <p>Watch and synchronize two VR videos simultaneously with enhanced control options.</p>
+            <p>Experience high-quality VR video playback with synchronized controls.</p>
             <div class="vr-player">
                 <iframe id="video1" src="https://www.youtube.com/embed/?enablejsapi=1" allow="autoplay; encrypted-media" allowfullscreen></iframe>
                 <div class="vr-separator"></div>
@@ -257,11 +226,33 @@
         </div>
     </section>
 
+    <!-- About Section -->
+    <section id="about" class="about">
+        <div class="content">
+            <h3>About Us</h3>
+            <p>Learn more about our mission and technology.</p>
+            <div class="features">
+                <div class="feature-item">
+                    <h4>High Definition</h4>
+                    <p>Enjoy crisp, clear videos in high definition.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Synchronized Playback</h4>
+                    <p>Watch synchronized VR videos across devices.</p>
+                </div>
+                <div class="feature-item">
+                    <h4>Customizable Controls</h4>
+                    <p>Personalize your viewing experience with adjustable controls.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Contact Section -->
-    <section id="contact" class="contact">
-        <div>
+    <section id="contact" class="about">
+        <div class="content">
             <h3>Contact Us</h3>
-            <p>Have questions or feedback? We'd love to hear from you.</p>
+            <p>Have questions or feedback? Reach out to us!</p>
             <p>Email us at <a href="mailto:support@vrsite.com">support@vrsite.com</a> or call us at (123) 456-7890.</p>
         </div>
     </section>
@@ -283,22 +274,13 @@
             link.addEventListener('click', function(event) {
                 event.preventDefault();
                 document.querySelectorAll('section').forEach(section => section.classList.remove('active'));
-                document.querySelector(this.getAttribute('href')).classList.add('active');
+                        document.querySelector(this.getAttribute('href')).classList.add('active');
             });
         });
 
-        function navigateTo(sectionId) {
-            document.querySelectorAll('section').forEach(section => section.classList.remove('active'));
-            document.getElementById(sectionId).classList.add('active');
-        }
-
-        // VR Player functionality
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
+        // VR Player Controls
         var player1, player2;
+        var isFullscreen = false;
         var syncInterval;
 
         function onYouTubeIframeAPIReady() {
@@ -315,12 +297,14 @@
         }
 
         function onPlayerReady(event) {
-            document.getElementById('playButton').disabled = false;
+            if (player1 && player2) {
+                document.getElementById('playButton').disabled = false;
+            }
         }
 
         function loadVideo(url) {
-            var videoId;
             try {
+                var videoId;
                 if (url.includes('youtu.be')) {
                     videoId = url.split('youtu.be/')[1];
                 } else {
@@ -353,17 +337,8 @@
             }
         }
 
-        function playExampleVideo() {
-            var exampleUrl = 'https://www.youtube.com/watch?v=aG01KIXWrbU';
-            loadVideo(exampleUrl);
-            player1.playVideo();
-            player2.playVideo();
-            player2.mute();
-            startSyncCheck();
-        }
-
         function startSyncCheck() {
-            if (syncInterval) clearInterval(syncInterval);
+            if (syncInterval) clearInterval(syncInterval); // Clear previous interval if any
 
             syncInterval = setInterval(function() {
                 if (player1 && player2) {
@@ -371,16 +346,65 @@
                     var time2 = player2.getCurrentTime();
                     var diff = Math.abs(time1 - time2);
 
-                    if (diff > 0.09) { // Reduced threshold to 0.09 seconds
-                        var targetTime = Math.min(time1, time2);
+                    if (diff > 0.09) { // If difference is more than 0.09 seconds
+                        var targetTime = Math.min(time1, time2); // Seek to the earlier time
                         player1.seekTo(targetTime, true);
                         player2.seekTo(targetTime, true);
                     }
                 }
-            }, 500); // Check every half second
+            }, 1000); // Check every second
+        }
+
+        function playExampleVideo() {
+            var exampleVideoUrl = 'https://www.youtube.com/watch?v=aG01KIXWrbU';
+            loadVideo(exampleVideoUrl);
+            player1.playVideo();
+            player2.playVideo();
+            player2.mute(); // Mute the second video
         }
 
         document.getElementById('playButton').addEventListener('click', playBothVideos);
+
+        document.getElementById('hideControlsButton').addEventListener('click', function() {
+            var controlsContainer = document.getElementById('controlsContainer');
+            controlsContainer.classList.toggle('hidden');
+        });
+
+        document.getElementById('fullscreenButton').addEventListener('click', function() {
+            var body = document.body;
+            if (!isFullscreen) {
+                body.classList.add('fullscreen');
+                isFullscreen = true;
+            } else {
+                body.classList.remove('fullscreen');
+                isFullscreen = false;
+            }
+        });
+
+        // Smooth Scroll for Navigation
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+
+        // Animations
+        document.querySelectorAll('section').forEach(section => {
+            section.addEventListener('mouseenter', function() {
+                this.style.transition = 'background-color 0.5s ease-in-out';
+                this.style.backgroundColor = '#fff';
+            });
+            section.addEventListener('mouseleave', function() {
+                this.style.transition = 'background-color 0.5s ease-in-out';
+                this.style.backgroundColor = '#f0f0f0';
+            });
+        });
+
+        window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
     </script>
 </body>
 </html>
+
